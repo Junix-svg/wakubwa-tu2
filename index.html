@@ -2,119 +2,161 @@
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WAKUBWA TU2</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #101010;
-      color: white;
-    }
-    header {
-      padding: 22px 16px;
-      background: #191919;
-      border-bottom: 2px solid #c99b36;
-    }
-    header h1 { color: #e4b94f; margin: 0; }
-    header p { color: #bbb; margin-bottom: 0; }
-    nav { padding: 15px; background: #222; }
-    nav a {
-      color: white; text-decoration: none;
-      margin-right: 15px;
-    }
-    main { padding: 20px 16px; }
-    .hero {
-      background: #292016;
-      padding: 25px 18px;
-      border-radius: 12px;
-    }
-    .hero h2 { color: #e4b94f; }
-    .videos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-    .card {
-      background: #202020;
-      padding: 15px;
-      border-radius: 12px;
-    }
-    .thumb {
-      height: 125px;
-      background: #39332a;
-      display: grid;
-      place-items: center;
-      border-radius: 8px;
-      color: #e4b94f;
-      font-size: 22px;
-    }
-    button {
-      background: #d4a83e;
-      color: #111;
-      border: 0;
-      padding: 11px 16px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-    footer {
-      text-align: center;
-      padding: 25px;
-      color: #aaa;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAKUBWA TU2</title>
+
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+header {
+  background: #181818;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #c9a227;
+}
+.logo {
+  color: #e2bd45;
+  font-size: 22px;
+  font-weight: bold;
+}
+button {
+  background: #d6ad35;
+  color: #111;
+  border: none;
+  padding: 11px 15px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.hero {
+  text-align: center;
+  padding: 65px 20px;
+  background: linear-gradient(135deg,#252525,#111);
+}
+.hero h1 {
+  font-size: 34px;
+  color: #e2bd45;
+}
+.hero p { color: #ccc; }
+.section { padding: 20px; }
+.videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 18px;
+}
+.video {
+  background: #202020;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+.thumbnail {
+  height: 145px;
+  background: linear-gradient(135deg,#383838,#171717);
+  display: grid;
+  place-items: center;
+  font-size: 45px;
+}
+.video-info { padding: 15px; }
+.price { color: #e2bd45; font-weight: bold; }
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #999;
+  background: #181818;
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>WAKUBWA TU2</h1>
-    <p>Burudani, elimu na filamu kwa njia rahisi.</p>
-  </header>
 
-  <nav>
-    <a href="#">Nyumbani</a>
-    <a href="#videos">Video</a>
-    <a href="#about">Kuhusu sisi</a>
-  </nav>
+<header>
+  <div class="logo">WAKUBWA TU2</div>
+  <button onclick="toggleLanguage()" id="lang">English</button>
+</header>
 
-  <main>
-    <section class="hero">
-      <h2>Karibu WAKUBWA TU2</h2>
-      <p>Gundua maudhui mbalimbali ya burudani na elimu.</p>
-      <button onclick="document.querySelector('#videos').scrollIntoView()">
-        Tazama makundi
-      </button>
-    </section>
+<section class="hero">
+  <h1 id="welcome">Karibu WAKUBWA TU2</h1>
+  <p id="intro">Jukwaa lako la kutazama video.</p>
+  <button onclick="document.getElementById('videos').scrollIntoView()"
+  id="explore">Tazama Video</button>
+</section>
 
-    <h2 id="videos">Video zetu</h2>
-    <section class="videos">
-      <div class="card">
-        <div class="thumb">FILAMU</div>
-        <h3>Filamu</h3>
-        <p>Hadithi na burudani.</p>
+<section class="section">
+  <h2 id="heading">Video Zetu</h2>
+
+  <div class="videos" id="videos">
+
+    <div class="video">
+      <div class="thumbnail">▶</div>
+      <div class="video-info">
+        <h3>Video ya Mfano 01</h3>
+        <p id="desc1">Maudhui ya burudani.</p>
+        <p class="price">TSh 2,000</p>
+        <button onclick="alert('Mfumo wa malipo utaunganishwa baadaye.')"
+        id="watch1">Nunua Video</button>
       </div>
-      <div class="card">
-        <div class="thumb">ELIMU</div>
-        <h3>Elimu</h3>
-        <p>Jifunze mambo mapya.</p>
-      </div>
-      <div class="card">
-        <div class="thumb">KOMEDI</div>
-        <h3>Komedi</h3>
-        <p>Burudani na vichekesho.</p>
-      </div>
-    </section>
+    </div>
 
-    <section id="about">
-      <h2>Kuhusu WAKUBWA TU2</h2>
-      <p>Jukwaa la video lenye maudhui salama na yenye ubora.</p>
-    </section>
-  </main>
+    <div class="video">
+      <div class="thumbnail">▶</div>
+      <div class="video-info">
+        <h3>Video ya Mfano 02</h3>
+        <p id="desc2">Maudhui ya elimu.</p>
+        <p class="price">TSh 3,000</p>
+        <button onclick="alert('Mfumo wa malipo utaunganishwa baadaye.')"
+        id="watch2">Nunua Video</button>
+      </div>
+    </div>
 
-  <footer>
-    WAKUBWA TU2 © 2026
-  </footer>
+  </div>
+</section>
+
+<footer>
+  © 2026 WAKUBWA TU2. All Rights Reserved.
+</footer>
+
+<script>
+let english = false;
+
+function toggleLanguage() {
+  english = !english;
+
+  document.getElementById("lang").textContent =
+    english ? "Kiswahili" : "English";
+
+  document.getElementById("welcome").textContent =
+    english ? "Welcome to WAKUBWA TU2" : "Karibu WAKUBWA TU2";
+
+  document.getElementById("intro").textContent =
+    english ? "Your video entertainment platform." : "Jukwaa lako la kutazama video.";
+
+  document.getElementById("heading").textContent =
+    english ? "Our Videos" : "Video Zetu";
+
+  document.getElementById("explore").textContent =
+    english ? "Explore Videos" : "Tazama Video";
+
+  document.getElementById("desc1").textContent =
+    english ? "Entertainment content." : "Maudhui ya burudani.";
+
+  document.getElementById("desc2").textContent =
+    english ? "Educational content." : "Maudhui ya elimu.";
+
+  document.getElementById("watch1").textContent =
+    english ? "Buy Video" : "Nunua Video";
+
+  document.getElementById("watch2").textContent =
+    english ? "Buy Video" : "Nunua Video";
+}
+</script>
+
 </body>
 </html>
