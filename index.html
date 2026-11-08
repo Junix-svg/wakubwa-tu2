@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAKUBWA TU2</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101010;
+      color: white;
+    }
+    header {
+      padding: 22px 16px;
+      background: #191919;
+      border-bottom: 2px solid #c99b36;
+    }
+    header h1 { color: #e4b94f; margin: 0; }
+    header p { color: #bbb; margin-bottom: 0; }
+    nav { padding: 15px; background: #222; }
+    nav a {
+      color: white; text-decoration: none;
+      margin-right: 15px;
+    }
+    main { padding: 20px 16px; }
+    .hero {
+      background: #292016;
+      padding: 25px 18px;
+      border-radius: 12px;
+    }
+    .hero h2 { color: #e4b94f; }
+    .videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .card {
+      background: #202020;
+      padding: 15px;
+      border-radius: 12px;
+    }
+    .thumb {
+      height: 125px;
+      background: #39332a;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #e4b94f;
+      font-size: 22px;
+    }
+    button {
+      background: #d4a83e;
+      color: #111;
+      border: 0;
+      padding: 11px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>WAKUBWA TU2</h1>
+    <p>Burudani, elimu na filamu kwa njia rahisi.</p>
+  </header>
+
+  <nav>
+    <a href="#">Nyumbani</a>
+    <a href="#videos">Video</a>
+    <a href="#about">Kuhusu sisi</a>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <h2>Karibu WAKUBWA TU2</h2>
+      <p>Gundua maudhui mbalimbali ya burudani na elimu.</p>
+      <button onclick="document.querySelector('#videos').scrollIntoView()">
+        Tazama makundi
+      </button>
+    </section>
+
+    <h2 id="videos">Video zetu</h2>
+    <section class="videos">
+      <div class="card">
+        <div class="thumb">FILAMU</div>
+        <h3>Filamu</h3>
+        <p>Hadithi na burudani.</p>
+      </div>
+      <div class="card">
+        <div class="thumb">ELIMU</div>
+        <h3>Elimu</h3>
+        <p>Jifunze mambo mapya.</p>
+      </div>
+      <div class="card">
+        <div class="thumb">KOMEDI</div>
+        <h3>Komedi</h3>
+        <p>Burudani na vichekesho.</p>
+      </div>
+    </section>
+
+    <section id="about">
+      <h2>Kuhusu WAKUBWA TU2</h2>
+      <p>Jukwaa la video lenye maudhui salama na yenye ubora.</p>
+    </section>
+  </main>
+
+  <footer>
+    WAKUBWA TU2 © 2026
+  </footer>
+</body>
+</html>
