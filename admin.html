@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAKUBWA TU2 - Admin</title>
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+h1 { color: #e2bd45; }
+.panel {
+  max-width: 550px;
+  margin: 25px auto;
+  padding: 20px;
+  background: #202020;
+  border-radius: 12px;
+}
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 9px 0 18px;
+  box-sizing: border-box;
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 6px;
+}
+label { color: #e2bd45; }
+button {
+  background: #d6ad35;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.note { color: #bbb; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+<h1>WAKUBWA TU2</h1>
+<h2>Admin Dashboard</h2>
+<p>Ongeza taarifa za video mpya.</p>
+
+<form onsubmit="addVideo(event)">
+<label>Jina la video</label>
+<input id="title" required>
+
+<label>Maelezo ya video</label>
+<textarea id="description" required></textarea>
+
+<label>Bei (TSh)</label>
+<input id="price" type="number" min="1" required>
+
+<label>Kiungo cha video</label>
+<input id="videoUrl" type="url" placeholder="https://..." required>
+
+<button type="submit">Ongeza Video</button>
+</form>
+
+<p class="note">
+Hii ni demo ya majaribio. Taarifa hazijahifadhiwa kwenye database
+na video hazijapakiwa kwenye server.
+</p>
+
+<h2>Video zilizoongezwa</h2>
+<div id="videoList"></div>
+</div>
+
+<script>
+function addVideo(event) {
+  event.preventDefault();
+
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+  const price = document.getElementById("price").value;
+
+  const item = document.createElement("div");
+  item.style.borderTop = "1px solid #555";
+  item.style.padding = "12px 0";
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+
+  const details = document.createElement("p");
+  details.textContent = description;
+
+  const cost = document.createElement("p");
+  cost.textContent = "TSh " + Number(price).toLocaleString();
+
+  item.append(heading, details, cost);
+  document.getElementById("videoList").appendChild(item);
+
+  event.target.reset();
+}
+</script>
+
+</body>
+</html>
