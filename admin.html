@@ -110,7 +110,24 @@
       }
     };
 
-    onAuthStateChanged(auth, (user) => {
+    
+const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
+
+onAuthStateChanged(auth, async (user) => {
+  if (user && user.uid === ADMIN_UID) {
+    login.style.display = "none";
+    dashboard.style.display = "block";
+  } else {
+    login.style.display = "block";
+    dashboard.style.display = "none";
+
+    if (user) {
+      await signOut(auth);
+      message.textContent = "Huna ruhusa ya kuingia Admin Dashboard.";
+    }
+  }
+});
+
       login.style.display = user ? "none" : "block";
       dashboard.style.display = user ? "block" : "none";
     });
