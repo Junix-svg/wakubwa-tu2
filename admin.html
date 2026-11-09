@@ -1,344 +1,474 @@
-
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WAKUBWA TU2 - Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAKUBWA TU2 - Admin</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 20px 0;
-      background: #101010;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    .box {
-      background: #1d1d1d;
-      padding: 25px;
-      width: 85%;
-      max-width: 380px;
-      border-radius: 14px;
-      text-align: center;
-    }
+body {
+  margin: 0;
+  padding: 20px 0;
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-    h2, h3 {
-      color: #d6ad55;
-    }
+.box {
+  background: #1d1d1d;
+  padding: 25px;
+  width: 90%;
+  max-width: 420px;
+  border-radius: 14px;
+  text-align: center;
+}
 
-    input {
-      width: 95%;
-      padding: 13px;
-      margin: 9px 0;
-      border: 1px solid #555;
-      border-radius: 7px;
-      background: #292929;
-      color: white;
-      box-sizing: border-box;
-    }
+h2, h3 {
+  color: #d6ad55;
+}
 
-    button {
-      width: 100%;
-      padding: 13px;
-      margin-top: 12px;
-      background: #d6ad55;
-      border: none;
-      border-radius: 7px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+input {
+  width: 100%;
+  padding: 13px;
+  margin: 9px 0;
+  border: 1px solid #555;
+  border-radius: 7px;
+  background: #292929;
+  color: white;
+}
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  background: #d6ad55;
+  border: none;
+  border-radius: 7px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    #dashboard {
-      display: none;
-    }
+button:disabled {
+  opacity: 0.5;
+}
 
-    #message, #videoMessage {
-      overflow-wrap: anywhere;
-      font-size: 14px;
-    }
+#dashboard {
+  display: none;
+}
 
-    #message {
-      color: #ff7777;
-    }
+#message {
+  color: #ff7777;
+}
 
-    #videoMessage {
-      color: #d6ad55;
-    }
+#videoMessage {
+  color: #d6ad55;
+  overflow-wrap: anywhere;
+}
 
-    hr {
-      border: 1px solid #444;
-      margin: 22px 0;
-    }
-  </style>
+hr {
+  border: 1px solid #444;
+  margin: 22px 0;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="box">
+<div class="box">
 
-    <h2>WAKUBWA TU2</h2>
-    <p>Admin Dashboard</p>
+<h2>WAKUBWA TU2</h2>
+<p>Admin Dashboard</p>
 
-    <div id="login">
-      <input
-        id="email"
-        type="email"
-        placeholder="Admin Email"
-        autocomplete="username"
-      >
+<div id="login">
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Password"
-        autocomplete="current-password"
-      >
+<input
+id="email"
+type="email"
+placeholder="Admin Email"
+autocomplete="username"
+>
 
-      <button id="loginBtn">LOGIN</button>
+<input
+id="password"
+type="password"
+placeholder="Password"
+autocomplete="current-password"
+>
 
-      <p id="message"></p>
-    </div>
+<button id="loginBtn">LOGIN</button>
 
-    <div id="dashboard">
+<p id="message"></p>
 
-      <h3>Welcome, Admin!</h3>
-      <p>Umeingia kwenye Admin Dashboard.</p>
-
-      <hr>
-
-      <h3>Ongeza Video</h3>
-
-      <input
-        id="videoTitle"
-        type="text"
-        placeholder="Jina la Video"
-      >
-
-      <input
-        id="videoDescription"
-        type="text"
-        placeholder="Maelezo ya Video"
-      >
-
-      <input
-        id="videoPrice"
-        type="number"
-        min="1"
-        placeholder="Bei ya Video (TSh)"
-      >
-
-      <input
-        id="videoUrl"
-        type="url"
-        placeholder="Kiungo cha Video"
-      >
-
-      <button id="addVideoBtn">HIFADHI VIDEO</button>
-
-      <p id="videoMessage"></p>
-
-      <hr>
-
-      <button id="logoutBtn">LOGOUT</button>
-
-    </div>
-
-  </div>
-
-  <script type="module">
-
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+</div>
 
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
-      authDomain: "wakubwa-tu2.firebaseapp.com",
-      projectId: "wakubwa-tu2",
-      storageBucket: "wakubwa-tu2.firebasestorage.app",
-      messagingSenderId: "399469319991",
-      appId: "1:399469319991:web:dc665855a312c69dacacb2"
-    };
+<div id="dashboard">
+
+<h3>Welcome, Admin!</h3>
+
+<p>Umeingia kwenye Admin Dashboard.</p>
+
+<hr>
+
+<h3>Ongeza Video</h3>
+
+<input
+id="videoTitle"
+type="text"
+placeholder="Jina la Video"
+>
+
+<input
+id="videoDescription"
+type="text"
+placeholder="Maelezo ya Video"
+>
+
+<input
+id="videoPrice"
+type="number"
+min="1"
+placeholder="Bei ya Video (TSh)"
+>
+
+<input
+id="videoUrl"
+type="url"
+placeholder="Kiungo cha Video (HTTPS)"
+>
+
+<button id="addVideoBtn">
+HIFADHI VIDEO
+</button>
+
+<p id="videoMessage"></p>
+
+<hr>
+
+<button id="logoutBtn">
+LOGOUT
+</button>
+
+</div>
+
+</div>
 
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+}
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  writeBatch,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 
-    const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
-
-    const login = document.getElementById("login");
-    const dashboard = document.getElementById("dashboard");
-    const message = document.getElementById("message");
-
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const addVideoBtn = document.getElementById("addVideoBtn");
-    const videoMessage = document.getElementById("videoMessage");
-
-    let isAdmin = false;
+const firebaseConfig = {
+  apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
+  authDomain: "wakubwa-tu2.firebaseapp.com",
+  projectId: "wakubwa-tu2",
+  storageBucket: "wakubwa-tu2.firebasestorage.app",
+  messagingSenderId: "399469319991",
+  appId: "1:399469319991:web:dc665855a312c69dacacb2"
+};
 
 
-    // ADMIN LOGIN
+const app = initializeApp(firebaseConfig);
 
-    loginBtn.onclick = async () => {
+const auth = getAuth(app);
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      message.textContent = "";
-
-      if (!email || !password) {
-        message.textContent = "Weka Email na Password.";
-        return;
-      }
-
-      loginBtn.disabled = true;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-
-      } catch (error) {
-        message.textContent = "Login imeshindikana: " + error.code;
-
-      } finally {
-        loginBtn.disabled = false;
-      }
-    };
+const db = getFirestore(app);
 
 
-    // ADMIN ACCESS CHECK
+const ADMIN_UID =
+"5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
 
-    onAuthStateChanged(auth, async (user) => {
 
-      isAdmin = !!user && user.uid === ADMIN_UID;
+const login = document.getElementById("login");
 
-      if (isAdmin) {
-        login.style.display = "none";
-        dashboard.style.display = "block";
-        message.textContent = "";
+const dashboard = document.getElementById("dashboard");
 
-      } else {
-        login.style.display = "block";
-        dashboard.style.display = "none";
+const message = document.getElementById("message");
 
-        if (user) {
-          await signOut(auth);
-          message.textContent = "Huna ruhusa ya kuingia Admin Dashboard.";
-        }
-      }
+const videoMessage =
+document.getElementById("videoMessage");
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+const addVideoBtn =
+document.getElementById("addVideoBtn");
+
+
+let isAdmin = false;
+
+
+// LOGIN
+
+loginBtn.onclick = async () => {
+
+  const email =
+  document.getElementById("email").value.trim();
+
+  const password =
+  document.getElementById("password").value;
+
+  message.textContent = "";
+
+  if (!email || !password) {
+    message.textContent = "Weka Email na Password.";
+    return;
+  }
+
+  loginBtn.disabled = true;
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+  } catch (error) {
+
+    message.textContent =
+    "Login imeshindikana: " + error.code;
+
+  } finally {
+
+    loginBtn.disabled = false;
+
+  }
+
+};
+
+
+// ADMIN ACCESS
+
+onAuthStateChanged(auth, async (user) => {
+
+  isAdmin =
+  !!user && user.uid === ADMIN_UID;
+
+  if (isAdmin) {
+
+    login.style.display = "none";
+
+    dashboard.style.display = "block";
+
+    message.textContent = "";
+
+  } else {
+
+    login.style.display = "block";
+
+    dashboard.style.display = "none";
+
+    if (user) {
+
+      await signOut(auth);
+
+      message.textContent =
+      "Huna ruhusa ya kuingia Admin Dashboard.";
+
+    }
+
+  }
+
+});
+
+
+// ADD VIDEO
+
+addVideoBtn.onclick = async () => {
+
+  if (
+    !auth.currentUser ||
+    !isAdmin ||
+    auth.currentUser.uid !== ADMIN_UID
+  ) {
+
+    videoMessage.textContent =
+    "Huna ruhusa ya kufanya hivyo.";
+
+    return;
+
+  }
+
+
+  const title =
+  document.getElementById("videoTitle").value.trim();
+
+  const description =
+  document.getElementById("videoDescription").value.trim();
+
+  const price =
+  Number(document.getElementById("videoPrice").value);
+
+  const videoUrl =
+  document.getElementById("videoUrl").value.trim();
+
+
+  if (
+    !title ||
+    !Number.isFinite(price) ||
+    price <= 0 ||
+    !videoUrl
+  ) {
+
+    videoMessage.textContent =
+    "Jaza taarifa zote kwa usahihi.";
+
+    return;
+
+  }
+
+
+  let parsedUrl;
+
+  try {
+
+    parsedUrl = new URL(videoUrl);
+
+  } catch {
+
+    videoMessage.textContent =
+    "Kiungo cha video si sahihi.";
+
+    return;
+
+  }
+
+
+  if (parsedUrl.protocol !== "https:") {
+
+    videoMessage.textContent =
+    "Tumia kiungo kinachoanza na HTTPS.";
+
+    return;
+
+  }
+
+
+  addVideoBtn.disabled = true;
+
+  videoMessage.textContent =
+  "Inahifadhi taarifa...";
+
+
+  try {
+
+    const videoId =
+    doc(collection(db, "publicVideos")).id;
+
+    const batch = writeBatch(db);
+
+    const publicVideoRef =
+    doc(db, "publicVideos", videoId);
+
+    const adminVideoRef =
+    doc(db, "adminData", videoId);
+
+
+    // PUBLIC INFORMATION
+    // Hizi ndizo taarifa zinazoonekana Homepage.
+
+    batch.set(publicVideoRef, {
+
+      title: title,
+
+      description: description,
+
+      price: price,
+
+      createdAt: serverTimestamp()
+
     });
 
 
-    // SAVE VIDEO INFORMATION
+    // PRIVATE ADMIN INFORMATION
+    // Kiungo hakipelekwi kwenye Homepage.
 
-    addVideoBtn.onclick = async () => {
+    batch.set(adminVideoRef, {
 
-      if (!auth.currentUser || !isAdmin ||
-          auth.currentUser.uid !== ADMIN_UID) {
-        videoMessage.textContent = "Huna ruhusa ya kufanya hivyo.";
-        return;
-      }
+      title: title,
 
-      const title = document.getElementById("videoTitle").value.trim();
+      description: description,
 
-      const description =
-        document.getElementById("videoDescription").value.trim();
+      price: price,
 
-      const price = Number(
-        document.getElementById("videoPrice").value
-      );
+      videoUrl: videoUrl,
 
-      const videoUrl =
-        document.getElementById("videoUrl").value.trim();
+      createdAt: serverTimestamp()
+
+    });
 
 
-      if (!title || !videoUrl || !Number.isFinite(price) || price <= 0) {
-        videoMessage.textContent =
-          "Jaza jina, kiungo na bei sahihi.";
-        return;
-      }
-
-      let parsedUrl;
-
-      try {
-        parsedUrl = new URL(videoUrl);
-      } catch {
-        videoMessage.textContent = "Kiungo cha video si sahihi.";
-        return;
-      }
-
-      if (!["https:", "http:"].includes(parsedUrl.protocol)) {
-        videoMessage.textContent = "Tumia kiungo cha HTTP au HTTPS.";
-        return;
-      }
+    await batch.commit();
 
 
-      addVideoBtn.disabled = true;
-      videoMessage.textContent = "Inahifadhi taarifa...";
-
-      try {
-
-        await addDoc(collection(db, "adminData"), {
-          title: title,
-          description: description,
-          price: price,
-          videoUrl: videoUrl,
-          createdAt: serverTimestamp()
-        });
-
-        videoMessage.textContent =
-          "Taarifa zimehifadhiwa vizuri!";
-
-        document.getElementById("videoTitle").value = "";
-        document.getElementById("videoDescription").value = "";
-        document.getElementById("videoPrice").value = "";
-        document.getElementById("videoUrl").value = "";
-
-      } catch (error) {
-
-        videoMessage.textContent =
-          "Hitilafu: " + error.code;
-
-      } finally {
-        addVideoBtn.disabled = false;
-      }
-    };
+    videoMessage.textContent =
+    "Video imehifadhiwa vizuri!";
 
 
-    // ADMIN LOGOUT
+    document.getElementById("videoTitle").value = "";
 
-    logoutBtn.onclick = async () => {
-      await signOut(auth);
-    };
+    document.getElementById("videoDescription").value = "";
 
-  </script>
+    document.getElementById("videoPrice").value = "";
+
+    document.getElementById("videoUrl").value = "";
+
+
+  } catch (error) {
+
+    videoMessage.textContent =
+    "Hitilafu: " + error.code;
+
+  } finally {
+
+    addVideoBtn.disabled = false;
+
+  }
+
+};
+
+
+// LOGOUT
+
+logoutBtn.onclick = async () => {
+
+  await signOut(auth);
+
+};
+
+</script>
 
 </body>
 </html>
