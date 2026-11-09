@@ -105,10 +105,9 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        message.textContent = "Login imeshindikana. Hakiki Email na Password.";
-      }
-    };
+    } catch (error) {
+  message.textContent = "Login imeshindikana: " + error.code;
+}  
 
     
 const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
