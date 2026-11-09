@@ -1,105 +1,124 @@
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WAKUBWA TU2 - Admin</title>
-<style>
-body {
-  margin: 0;
-  padding: 20px;
-  background: #101010;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-h1 { color: #e2bd45; }
-.panel {
-  max-width: 550px;
-  margin: 25px auto;
-  padding: 20px;
-  background: #202020;
-  border-radius: 12px;
-}
-input, textarea {
-  width: 100%;
-  padding: 12px;
-  margin: 9px 0 18px;
-  box-sizing: border-box;
-  background: #333;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 6px;
-}
-label { color: #e2bd45; }
-button {
-  background: #d6ad35;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-}
-.note { color: #bbb; font-size: 13px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAKUBWA TU2 - Admin</title>
+  <style>
+    body {
+      margin: 0;
+      background: #101010;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .box {
+      background: #1d1d1d;
+      padding: 28px;
+      width: 85%;
+      max-width: 380px;
+      border-radius: 14px;
+      text-align: center;
+    }
+    h2 { color: #d6ad55; }
+    input {
+      width: 95%;
+      padding: 13px;
+      margin: 9px 0;
+      border: 1px solid #555;
+      border-radius: 7px;
+      background: #292929;
+      color: white;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 12px;
+      background: #d6ad55;
+      border: none;
+      border-radius: 7px;
+      font-weight: bold;
+    }
+    #dashboard { display: none; }
+    #message { color: #ff7777; }
+  </style>
 </head>
 <body>
 
-<div class="panel">
-<h1>WAKUBWA TU2</h1>
-<h2>Admin Dashboard</h2>
-<p>Ongeza taarifa za video mpya.</p>
+  <div class="box">
+    <h2>WAKUBWA TU2</h2>
+    <p>Admin Login</p>
 
-<form onsubmit="addVideo(event)">
-<label>Jina la video</label>
-<input id="title" required>
+    <div id="login">
+      <input id="email" type="email"
+        placeholder="Admin Email">
+      <input id="password" type="password"
+        placeholder="Password">
+      <button id="loginBtn">LOGIN</button>
+      <p id="message"></p>
+    </div>
 
-<label>Maelezo ya video</label>
-<textarea id="description" required></textarea>
+    <div id="dashboard">
+      <h3>Welcome, Admin!</h3>
+      <p>Umeingia kwenye Admin Dashboard.</p>
+      <button id="logoutBtn">LOGOUT</button>
+    </div>
+  </div>
 
-<label>Bei (TSh)</label>
-<input id="price" type="number" min="1" required>
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 
-<label>Kiungo cha video</label>
-<input id="videoUrl" type="url" placeholder="https://..." required>
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-<button type="submit">Ongeza Video</button>
-</form>
+    const firebaseConfig = {
+      apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
+      authDomain: "wakubwa-tu2.firebaseapp.com",
+      projectId: "wakubwa-tu2",
+      storageBucket: "wakubwa-tu2.firebasestorage.app",
+      messagingSenderId: "399469319991",
+      appId: "1:399469319991:web:dc665855a312c69dacacb2"
+    };
 
-<p class="note">
-Hii ni demo ya majaribio. Taarifa hazijahifadhiwa kwenye database
-na video hazijapakiwa kwenye server.
-</p>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-<h2>Video zilizoongezwa</h2>
-<div id="videoList"></div>
-</div>
+    const login = document.getElementById("login");
+    const dashboard = document.getElementById("dashboard");
+    const message = document.getElementById("message");
 
-<script>
-function addVideo(event) {
-  event.preventDefault();
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-  const title = document.getElementById("title").value;
-  const description = document.getElementById("description").value;
-  const price = document.getElementById("price").value;
+      message.textContent = "";
 
-  const item = document.createElement("div");
-  item.style.borderTop = "1px solid #555";
-  item.style.padding = "12px 0";
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        message.textContent = "Login imeshindikana. Hakiki Email na Password.";
+      }
+    };
 
-  const heading = document.createElement("h3");
-  heading.textContent = title;
+    onAuthStateChanged(auth, (user) => {
+      login.style.display = user ? "none" : "block";
+      dashboard.style.display = user ? "block" : "none";
+    });
 
-  const details = document.createElement("p");
-  details.textContent = description;
-
-  const cost = document.createElement("p");
-  cost.textContent = "TSh " + Number(price).toLocaleString();
-
-  item.append(heading, details, cost);
-  document.getElementById("videoList").appendChild(item);
-
-  event.target.reset();
-}
-</script>
+    document.getElementById("logoutBtn").onclick = () => {
+      signOut(auth);
+    };
+  </script>
 
 </body>
 </html>
