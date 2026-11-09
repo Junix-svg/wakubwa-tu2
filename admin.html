@@ -74,7 +74,25 @@
       <button id="logoutBtn">LOGOUT</button>
     </div>
   </div>
+<hr>
 
+<h3>Ongeza Video</h3>
+
+<input id="videoTitle" type="text"
+  placeholder="Jina la Video">
+
+<input id="videoDescription" type="text"
+  placeholder="Maelezo ya Video">
+
+<input id="videoPrice" type="number"
+  placeholder="Bei ya Video (TSh)">
+
+<input id="videoUrl" type="url"
+  placeholder="Kiungo cha Video">
+
+<button id="addVideoBtn">HIFADHI VIDEO</button>
+
+<p id="videoMessage"></p>
   <script type="module">
     import { initializeApp }
       from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -85,7 +103,12 @@
       onAuthStateChanged,
       signOut
     } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
       authDomain: "wakubwa-tu2.firebaseapp.com",
@@ -97,13 +120,51 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
+const db = getFirestore(app);
     const login = document.getElementById("login");
     const dashboard = document.getElementById("dashboard");
     const message = document.getElementById("message");
 
     const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
+const addVideoBtn = document.getElementById("addVideoBtn");
+const videoMessage = document.getElementById("videoMessage");
 
+addVideoBtn.onclick = async () => {
+  const title = document.getElementById("videoTitle").value.trim();
+  const description = document.getElementById("videoDescription").value.trim();
+  const price = Number(document.getElementById("videoPrice").value);
+  const videoUrl = document.getElementById("videoUrl").value.trim();
+
+  if (!title || !videoUrl || !Number.isFinite(price) || price < 0) {
+    videoMessage.textContent = "Jaza jina, kiungo na bei sahihi.";
+    return;
+  }
+
+  try {
+    addVideoBtn.disabled = true;
+    videoMessage.textContent = "Inahifadhi taarifa...";
+
+    await addDoc(collection(db, "adminData"), {
+      title: title,
+      description: description,
+      price: price,
+      videoUrl: videoUrl,
+      createdAt: serverTimestamp()
+    });
+
+    videoMessage.textContent = "Taarifa zimehifadhiwa vizuri!";
+
+    document.getElementById("videoTitle").value = "";
+    document.getElementById("videoDescription").value = "";
+    document.getElementById("videoPrice").value = "";
+    document.getElementById("videoUrl").value = "";
+
+  } catch (error) {
+    videoMessage.textContent = "Hitilafu: " + error.code;
+  } finally {
+    addVideoBtn.disabled = false;
+  }
+};
     document.getElementById("loginBtn").onclick = async () => {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
