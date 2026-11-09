@@ -1,76 +1,143 @@
-
 <!DOCTYPE html>
 <html lang="sw">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>WAKUBWA TU2</title>
 
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #101010;
   color: white;
   font-family: Arial, sans-serif;
 }
+
 header {
   background: #181818;
-  padding: 20px;
+  padding: 18px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #c9a227;
 }
+
 .logo {
   color: #e2bd45;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: bold;
 }
+
 button {
   background: #d6ad35;
   color: #111;
   border: none;
-  padding: 11px 15px;
+  padding: 12px 16px;
   border-radius: 6px;
   font-weight: bold;
+  cursor: pointer;
 }
+
 .hero {
   text-align: center;
   padding: 65px 20px;
-  background: linear-gradient(135deg,#252525,#111);
+  background: linear-gradient(135deg,#292929,#111);
 }
+
 .hero h1 {
   font-size: 34px;
   color: #e2bd45;
 }
-.hero p { color: #ccc; }
-.section { padding: 20px; }
+
+.hero p {
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.section {
+  padding: 25px 20px;
+}
+
+.section h2 {
+  color: #e2bd45;
+}
+
 .videos {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
   gap: 18px;
 }
+
 .video {
   background: #202020;
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #333;
+  border: 1px solid #383838;
 }
+
 .thumbnail {
   height: 145px;
   background: linear-gradient(135deg,#383838,#171717);
   display: grid;
   place-items: center;
   font-size: 45px;
+  color: #d6ad35;
 }
-.video-info { padding: 15px; }
-.price { color: #e2bd45; font-weight: bold; }
+
+.video-info {
+  padding: 15px;
+}
+
+.video-info h3 {
+  color: white;
+}
+
+.description {
+  color: #bbb;
+  line-height: 1.5;
+}
+
+.price {
+  color: #e2bd45;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.empty {
+  color: #aaa;
+  text-align: center;
+  padding: 35px 10px;
+  grid-column: 1 / -1;
+}
+
+#status {
+  color: #d6ad35;
+  text-align: center;
+  padding: 10px;
+}
+
 footer {
   text-align: center;
   padding: 25px;
   color: #999;
   background: #181818;
+  margin-top: 35px;
+}
+
+@media(max-width:480px) {
+  .hero h1 {
+    font-size: 27px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
 }
 </style>
 </head>
@@ -79,83 +146,241 @@ footer {
 
 <header>
   <div class="logo">WAKUBWA TU2</div>
-  <button onclick="toggleLanguage()" id="lang">English</button>
+  <button id="langBtn">English</button>
 </header>
 
 <section class="hero">
-  <h1 id="welcome">Karibu WAKUBWA TU2</h1>
-  <p id="intro">Jukwaa lako la kutazama video.</p>
-  <button onclick="document.getElementById('videos').scrollIntoView()"
-  id="explore">Tazama Video</button>
+
+  <h1 id="welcome">
+    Karibu WAKUBWA TU2
+  </h1>
+
+  <p id="intro">
+    Jukwaa lako la kutazama video.
+  </p>
+
+  <button id="exploreBtn">
+    Tazama Video
+  </button>
+
 </section>
 
 <section class="section">
+
   <h2 id="heading">Video Zetu</h2>
 
-  <div class="videos" id="videos">
+  <p id="status">
+    Inatafuta video...
+  </p>
 
-    <div class="video">
-      <div class="thumbnail">▶</div>
-      <div class="video-info">
-        <h3>Video ya Mfano 01</h3>
-        <p id="desc1">Maudhui ya burudani.</p>
-        <p class="price">TSh 2,000</p>
-        <button onclick="alert('Mfumo wa malipo utaunganishwa baadaye.')"
-        id="watch1">Nunua Video</button>
-      </div>
-    </div>
+  <div class="videos" id="videos"></div>
 
-    <div class="video">
-      <div class="thumbnail">▶</div>
-      <div class="video-info">
-        <h3>Video ya Mfano 02</h3>
-        <p id="desc2">Maudhui ya elimu.</p>
-        <p class="price">TSh 3,000</p>
-        <button onclick="alert('Mfumo wa malipo utaunganishwa baadaye.')"
-        id="watch2">Nunua Video</button>
-      </div>
-    </div>
-
-  </div>
 </section>
 
 <footer>
   © 2026 WAKUBWA TU2. All Rights Reserved.
 </footer>
 
-<script>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
+  authDomain: "wakubwa-tu2.firebaseapp.com",
+  projectId: "wakubwa-tu2",
+  storageBucket: "wakubwa-tu2.firebasestorage.app",
+  messagingSenderId: "399469319991",
+  appId: "1:399469319991:web:dc665855a312c69dacacb2"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+const videosContainer =
+  document.getElementById("videos");
+
+const status =
+  document.getElementById("status");
+
 let english = false;
 
-function toggleLanguage() {
+
+// LANGUAGE SWITCH
+
+document.getElementById("langBtn").onclick = () => {
+
   english = !english;
 
-  document.getElementById("lang").textContent =
+  document.getElementById("langBtn").textContent =
     english ? "Kiswahili" : "English";
 
   document.getElementById("welcome").textContent =
-    english ? "Welcome to WAKUBWA TU2" : "Karibu WAKUBWA TU2";
+    english
+      ? "Welcome to WAKUBWA TU2"
+      : "Karibu WAKUBWA TU2";
 
   document.getElementById("intro").textContent =
-    english ? "Your video entertainment platform." : "Jukwaa lako la kutazama video.";
+    english
+      ? "Your video platform."
+      : "Jukwaa lako la kutazama video.";
 
   document.getElementById("heading").textContent =
     english ? "Our Videos" : "Video Zetu";
 
-  document.getElementById("explore").textContent =
+  document.getElementById("exploreBtn").textContent =
     english ? "Explore Videos" : "Tazama Video";
 
-  document.getElementById("desc1").textContent =
-    english ? "Entertainment content." : "Maudhui ya burudani.";
+  renderVideos(currentVideos);
+};
 
-  document.getElementById("desc2").textContent =
-    english ? "Educational content." : "Maudhui ya elimu.";
 
-  document.getElementById("watch1").textContent =
-    english ? "Buy Video" : "Nunua Video";
+document.getElementById("exploreBtn").onclick = () => {
 
-  document.getElementById("watch2").textContent =
-    english ? "Buy Video" : "Nunua Video";
+  document.getElementById("videos").scrollIntoView({
+    behavior: "smooth"
+  });
+
+};
+
+
+// DISPLAY VIDEOS
+
+let currentVideos = [];
+
+function renderVideos(data) {
+
+  videosContainer.innerHTML = "";
+
+  if (data.length === 0) {
+
+    const empty = document.createElement("p");
+
+    empty.className = "empty";
+
+    empty.textContent = english
+      ? "No videos available yet."
+      : "Hakuna video zilizowekwa bado.";
+
+    videosContainer.appendChild(empty);
+
+    return;
+  }
+
+
+  data.forEach((video) => {
+
+    const card = document.createElement("div");
+
+    card.className = "video";
+
+
+    const thumbnail = document.createElement("div");
+
+    thumbnail.className = "thumbnail";
+
+    thumbnail.textContent = "▶";
+
+
+    const info = document.createElement("div");
+
+    info.className = "video-info";
+
+
+    const title = document.createElement("h3");
+
+    title.textContent = video.title || "Untitled";
+
+
+    const description = document.createElement("p");
+
+    description.className = "description";
+
+    description.textContent =
+      video.description || "";
+
+
+    const price = document.createElement("p");
+
+    price.className = "price";
+
+    price.textContent =
+      "TSh " + Number(video.price || 0).toLocaleString("en-US");
+
+
+    const button = document.createElement("button");
+
+    button.textContent = english
+      ? "Buy Video"
+      : "Nunua Video";
+
+    button.onclick = () => {
+
+      alert(
+        english
+          ? "Payment system is not connected yet."
+          : "Mfumo wa malipo bado haujaunganishwa."
+      );
+
+    };
+
+
+    info.appendChild(title);
+    info.appendChild(description);
+    info.appendChild(price);
+    info.appendChild(button);
+
+    card.appendChild(thumbnail);
+    card.appendChild(info);
+
+    videosContainer.appendChild(card);
+
+  });
+
 }
+
+
+// FIREBASE LIVE CONNECTION
+
+onSnapshot(
+  collection(db, "publicVideos"),
+
+  (snapshot) => {
+
+    currentVideos = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    status.textContent = "";
+
+    renderVideos(currentVideos);
+
+  },
+
+  (error) => {
+
+    console.error(error);
+
+    status.textContent = english
+      ? "Unable to load videos. Please try again."
+      : "Imeshindikana kupakia video. Jaribu tena.";
+
+  }
+
+);
+
 </script>
 
 </body>
