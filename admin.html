@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -68,6 +69,15 @@ button:disabled { opacity: 0.5; }
   margin: 15px 0;
 }
 
+.video-preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 10px 0;
+  background: #111;
+}
+
 .delete-btn {
   background: #a83232;
   color: white;
@@ -76,6 +86,12 @@ button:disabled { opacity: 0.5; }
 hr {
   border: 1px solid #444;
   margin: 22px 0;
+}
+
+.hint {
+  color: #aaa;
+  font-size: 12px;
+  line-height: 1.5;
 }
 </style>
 </head>
@@ -96,11 +112,9 @@ placeholder="Admin Email" autocomplete="username">
 placeholder="Password" autocomplete="current-password">
 
 <button id="loginBtn">LOGIN</button>
-
 <p id="message"></p>
 
 </div>
-
 
 <div id="dashboard">
 
@@ -118,6 +132,13 @@ placeholder="Maelezo ya Video">
 
 <input id="videoPrice" type="number"
 min="1" placeholder="Bei ya Video (TSh)">
+
+<input id="thumbnailUrl" type="url"
+placeholder="Kiungo cha Picha ya Video (HTTPS)">
+
+<p class="hint">
+Weka kiungo cha picha kitakachoonekana kwenye Video Card.
+</p>
 
 <input id="videoUrl" type="url"
 placeholder="Kiungo cha Video (HTTPS)">
@@ -141,7 +162,6 @@ placeholder="Kiungo cha Video (HTTPS)">
 </div>
 </div>
 
-
 <script type="module">
 
 import { initializeApp }
@@ -161,12 +181,9 @@ import {
   doc,
   writeBatch,
   getDocs,
-  updateDoc,
-  deleteDoc,
   serverTimestamp
 }
 from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
@@ -176,7 +193,6 @@ const firebaseConfig = {
   messagingSenderId: "399469319991",
   appId: "1:399469319991:web:dc665855a312c69dacacb2"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -199,6 +215,13 @@ const addVideoBtn = document.getElementById("addVideoBtn");
 
 let isAdmin = false;
 
+function validHttps(value) {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 // LOGIN
 
@@ -225,7 +248,6 @@ loginBtn.onclick = async () => {
   }
 };
 
-
 // ADMIN CHECK
 
 onAuthStateChanged(auth, async (user) => {
@@ -233,19 +255,13 @@ onAuthStateChanged(auth, async (user) => {
   isAdmin = !!user && user.uid === ADMIN_UID;
 
   if (isAdmin) {
-
     login.style.display = "none";
     dashboard.style.display = "block";
-
     message.textContent = "";
-
     await loadVideos();
-
   } else {
-
     login.style.display = "block";
     dashboard.style.display = "none";
-
     videoList.innerHTML = "";
 
     if (user) {
@@ -254,7 +270,6 @@ onAuthStateChanged(auth, async (user) => {
     }
   }
 });
-
 
 // ADD VIDEO
 
@@ -273,24 +288,25 @@ addVideoBtn.onclick = async () => {
 
   const price = Number(document.getElementById("videoPrice").value);
 
-  const videoUrl = document.getElementById("videoUrl").value.trim();
+  const thumbnailUrl =
+    document.getElementById("thumbnailUrl").value.trim();
 
-  if (!title || !videoUrl || !Number.isFinite(price) || price <= 0) {
+  const videoUrl =
+    document.getElementById("videoUrl").value.trim();
+
+  if (!title || !videoUrl ||
+      !Number.isFinite(price) || price <= 0) {
     videoMessage.textContent = "Jaza jina, kiungo na bei sahihi.";
     return;
   }
 
-  let parsedUrl;
-
-  try {
-    parsedUrl = new URL(videoUrl);
-  } catch {
-    videoMessage.textContent = "Kiungo si sahihi.";
+  if (!validHttps(videoUrl)) {
+    videoMessage.textContent = "Kiungo cha video lazima kiwe HTTPS.";
     return;
   }
 
-  if (parsedUrl.protocol !== "https:") {
-    videoMessage.textContent = "Tumia kiungo cha HTTPS.";
+  if (thumbnailUrl && !validHttps(thumbnailUrl)) {
+    videoMessage.textContent = "Kiungo cha picha lazima kiwe HTTPS.";
     return;
   }
 
@@ -307,6 +323,7 @@ addVideoBtn.onclick = async () => {
       title,
       description,
       price,
+      thumbnailUrl,
       createdAt: serverTimestamp()
     });
 
@@ -314,6 +331,7 @@ addVideoBtn.onclick = async () => {
       title,
       description,
       price,
+      thumbnailUrl,
       videoUrl,
       createdAt: serverTimestamp()
     });
@@ -325,6 +343,7 @@ addVideoBtn.onclick = async () => {
     document.getElementById("videoTitle").value = "";
     document.getElementById("videoDescription").value = "";
     document.getElementById("videoPrice").value = "";
+    document.getElementById("thumbnailUrl").value = "";
     document.getElementById("videoUrl").value = "";
 
     await loadVideos();
@@ -337,7 +356,6 @@ addVideoBtn.onclick = async () => {
     addVideoBtn.disabled = false;
   }
 };
-
 
 // LOAD VIDEOS
 
@@ -364,6 +382,10 @@ async function loadVideos() {
       const card = document.createElement("div");
       card.className = "video-item";
 
+      const preview = document.createElement("img");
+      preview.className = "video-preview";
+      preview.alt = "Picha ya video";
+
       const title = document.createElement("input");
       title.value = video.title || "";
       title.placeholder = "Jina la Video";
@@ -377,10 +399,28 @@ async function loadVideos() {
       price.min = "1";
       price.value = video.price || "";
 
+      const thumbnail = document.createElement("input");
+      thumbnail.type = "url";
+      thumbnail.value = video.thumbnailUrl || "";
+      thumbnail.placeholder = "Kiungo cha Picha (HTTPS)";
+
       const url = document.createElement("input");
       url.type = "url";
       url.value = video.videoUrl || "";
-      url.placeholder = "Kiungo cha Video";
+      url.placeholder = "Kiungo cha Video (HTTPS)";
+
+      function updatePreview() {
+        if (validHttps(thumbnail.value.trim())) {
+          preview.src = thumbnail.value.trim();
+          preview.style.display = "block";
+        } else {
+          preview.removeAttribute("src");
+          preview.style.display = "none";
+        }
+      }
+
+      thumbnail.oninput = updatePreview;
+      updatePreview();
 
       const saveBtn = document.createElement("button");
       saveBtn.textContent = "HIFADHI MABADILIKO";
@@ -396,6 +436,7 @@ async function loadVideos() {
         const newTitle = title.value.trim();
         const newDescription = description.value.trim();
         const newPrice = Number(price.value);
+        const newThumbnail = thumbnail.value.trim();
         const newUrl = url.value.trim();
 
         if (!newTitle || !newUrl ||
@@ -404,34 +445,39 @@ async function loadVideos() {
           return;
         }
 
+        if (!validHttps(newUrl)) {
+          status.textContent = "Kiungo cha video lazima kiwe HTTPS.";
+          return;
+        }
+
+        if (newThumbnail && !validHttps(newThumbnail)) {
+          status.textContent = "Kiungo cha picha lazima kiwe HTTPS.";
+          return;
+        }
+
+        saveBtn.disabled = true;
+        status.textContent = "Inasasisha...";
+
         try {
 
-          const parsed = new URL(newUrl);
+          const batch = writeBatch(db);
 
-          if (parsed.protocol !== "https:") {
-            status.textContent = "Tumia kiungo cha HTTPS.";
-            return;
-          }
+          batch.update(doc(db, "adminData", item.id), {
+            title: newTitle,
+            description: newDescription,
+            price: newPrice,
+            thumbnailUrl: newThumbnail,
+            videoUrl: newUrl
+          });
 
-          saveBtn.disabled = true;
-          status.textContent = "Inasasisha...";
+          batch.update(doc(db, "publicVideos", item.id), {
+            title: newTitle,
+            description: newDescription,
+            price: newPrice,
+            thumbnailUrl: newThumbnail
+          });
 
-          await Promise.all([
-
-            updateDoc(doc(db, "adminData", item.id), {
-              title: newTitle,
-              description: newDescription,
-              price: newPrice,
-              videoUrl: newUrl
-            }),
-
-            updateDoc(doc(db, "publicVideos", item.id), {
-              title: newTitle,
-              description: newDescription,
-              price: newPrice
-            })
-
-          ]);
+          await batch.commit();
 
           status.textContent = "Mabadiliko yamehifadhiwa!";
 
@@ -443,7 +489,6 @@ async function loadVideos() {
           saveBtn.disabled = false;
         }
       };
-
 
       deleteBtn.onclick = async () => {
 
@@ -458,13 +503,12 @@ async function loadVideos() {
 
         try {
 
-          await Promise.all([
+          const batch = writeBatch(db);
 
-            deleteDoc(doc(db, "adminData", item.id)),
+          batch.delete(doc(db, "adminData", item.id));
+          batch.delete(doc(db, "publicVideos", item.id));
 
-            deleteDoc(doc(db, "publicVideos", item.id))
-
-          ]);
+          await batch.commit();
 
           card.remove();
 
@@ -480,10 +524,11 @@ async function loadVideos() {
         }
       };
 
-
+      card.appendChild(preview);
       card.appendChild(title);
       card.appendChild(description);
       card.appendChild(price);
+      card.appendChild(thumbnail);
       card.appendChild(url);
       card.appendChild(saveBtn);
       card.appendChild(deleteBtn);
@@ -499,7 +544,6 @@ async function loadVideos() {
 
   }
 }
-
 
 // LOGOUT
 
