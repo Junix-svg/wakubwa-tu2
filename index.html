@@ -41,8 +41,6 @@ button {
   cursor: pointer;
 }
 
-button:hover { background: #f0ca54; }
-
 .hero {
   text-align: center;
   padding: 65px 20px;
@@ -59,15 +57,19 @@ button:hover { background: #f0ca54; }
   line-height: 1.6;
 }
 
-.section { padding: 25px 20px; }
+.section {
+  padding: 25px 20px;
+}
 
-.section h2 { color: #e2bd45; }
+.section h2 {
+  color: #e2bd45;
+}
 
-.search {
+.search-box {
   width: 100%;
   max-width: 500px;
   display: block;
-  margin: 20px auto;
+  margin: 18px auto 25px;
   padding: 14px;
   border-radius: 7px;
   border: 1px solid #555;
@@ -90,15 +92,31 @@ button:hover { background: #f0ca54; }
 }
 
 .thumbnail {
-  height: 145px;
+  width: 100%;
+  height: 170px;
   background: linear-gradient(135deg,#383838,#171717);
   display: grid;
   place-items: center;
-  font-size: 45px;
+  overflow: hidden;
   color: #d6ad35;
+  font-size: 45px;
 }
 
-.video-info { padding: 15px; }
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-info {
+  padding: 15px;
+}
+
+.video-info h3 {
+  color: white;
+  margin-top: 0;
+}
 
 .description {
   color: #bbb;
@@ -109,6 +127,10 @@ button:hover { background: #f0ca54; }
   color: #e2bd45;
   font-weight: bold;
   font-size: 18px;
+}
+
+.buy-button {
+  width: 100%;
 }
 
 .empty {
@@ -133,12 +155,11 @@ footer {
 }
 
 /* AGE CONFIRMATION */
-
 #ageGate {
   position: fixed;
   inset: 0;
+  background: rgba(0,0,0,0.96);
   z-index: 9999;
-  background: rgba(0,0,0,.97);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,18 +167,17 @@ footer {
 }
 
 .age-box {
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
+  background: #202020;
+  border: 1px solid #c9a227;
+  border-radius: 12px;
   padding: 30px 22px;
-  background: #1c1c1c;
-  border: 2px solid #c9a227;
-  border-radius: 14px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
 }
 
-.age-box h1 {
+.age-box h2 {
   color: #e2bd45;
-  font-size: 30px;
 }
 
 .age-box p {
@@ -165,15 +185,18 @@ footer {
   line-height: 1.6;
 }
 
-.age-buttons {
+.age-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 25px;
+  margin-top: 20px;
 }
 
-#noBtn {
+.age-actions button {
+  flex: 1;
+}
+
+#noAge {
   background: #444;
   color: white;
 }
@@ -187,21 +210,17 @@ footer {
 
 <body>
 
-<!-- AGE GATE -->
 <div id="ageGate">
   <div class="age-box">
-    <h1>WAKUBWA TU2</h1>
-    <h2 id="ageTitle">18+ Only</h2>
-    <p id="ageText">
-      Je, una miaka 18 au zaidi na unakubali kuendelea?
+    <h2>18+ Only</h2>
+    <p>
+      Tovuti hii imekusudiwa kwa watu wazima.
+      Tafadhali thibitisha kuwa una miaka 18 au zaidi.
     </p>
-
-    <div class="age-buttons">
-      <button id="yesBtn">Ndiyo, nina miaka 18+</button>
-      <button id="noBtn">Hapana</button>
+    <div class="age-actions">
+      <button id="yesAge">Ndiyo, nina miaka 18+</button>
+      <button id="noAge">Hapana</button>
     </div>
-
-    <p id="ageMessage"></p>
   </div>
 </div>
 
@@ -221,8 +240,8 @@ footer {
 
   <input
     type="search"
-    class="search"
     id="searchInput"
+    class="search-box"
     placeholder="Tafuta video..."
   >
 
@@ -260,30 +279,29 @@ const db = getFirestore(app);
 
 const videosContainer = document.getElementById("videos");
 const status = document.getElementById("status");
+const searchInput = document.getElementById("searchInput");
 
 let english = false;
 let currentVideos = [];
 
 // AGE CONFIRMATION
-
 const ageGate = document.getElementById("ageGate");
 
 if (localStorage.getItem("wakubwaAgeConfirmed") === "yes") {
   ageGate.style.display = "none";
 }
 
-document.getElementById("yesBtn").onclick = () => {
+document.getElementById("yesAge").onclick = () => {
   localStorage.setItem("wakubwaAgeConfirmed", "yes");
   ageGate.style.display = "none";
 };
 
-document.getElementById("noBtn").onclick = () => {
-  document.getElementById("ageMessage").textContent =
-    "Huwezi kuendelea ikiwa huna miaka 18.";
+document.getElementById("noAge").onclick = () => {
+  ageGate.querySelector(".age-box").innerHTML =
+    "<h2>Access Restricted</h2><p>Huwezi kuendelea kwenye tovuti hii.</p>";
 };
 
 // LANGUAGE SWITCH
-
 document.getElementById("langBtn").onclick = () => {
   english = !english;
 
@@ -302,7 +320,7 @@ document.getElementById("langBtn").onclick = () => {
   document.getElementById("exploreBtn").textContent =
     english ? "Explore Videos" : "Tazama Video";
 
-  document.getElementById("searchInput").placeholder =
+  searchInput.placeholder =
     english ? "Search videos..." : "Tafuta video...";
 
   renderVideos(currentVideos);
@@ -314,44 +332,63 @@ document.getElementById("exploreBtn").onclick = () => {
   });
 };
 
-// VIDEO SEARCH
-
-document.getElementById("searchInput").oninput = () => {
+// SEARCH
+searchInput.addEventListener("input", () => {
   renderVideos(currentVideos);
-};
+});
 
 // DISPLAY VIDEOS
-
 function renderVideos(data) {
   videosContainer.innerHTML = "";
 
-  const searchTerm =
-    document.getElementById("searchInput").value.toLowerCase();
+  const searchTerm = searchInput.value.trim().toLowerCase();
 
-  const filtered = data.filter(video =>
-    (video.title || "").toLowerCase().includes(searchTerm) ||
-    (video.description || "").toLowerCase().includes(searchTerm)
-  );
+  const filteredVideos = data.filter(video => {
+    const title = (video.title || "").toLowerCase();
+    const description = (video.description || "").toLowerCase();
 
-  if (filtered.length === 0) {
+    return title.includes(searchTerm) ||
+           description.includes(searchTerm);
+  });
+
+  if (filteredVideos.length === 0) {
     const empty = document.createElement("p");
     empty.className = "empty";
 
-    empty.textContent = english
-      ? "No videos found."
-      : "Hakuna video zilizopatikana.";
+    empty.textContent = searchTerm
+      ? (english ? "No matching videos found." : "Hakuna video inayolingana na utafutaji wako.")
+      : (english ? "No videos available yet." : "Hakuna video zilizowekwa bado.");
 
     videosContainer.appendChild(empty);
     return;
   }
 
-  filtered.forEach(video => {
+  filteredVideos.forEach(video => {
     const card = document.createElement("div");
     card.className = "video";
 
+    // VIDEO THUMBNAIL
     const thumbnail = document.createElement("div");
     thumbnail.className = "thumbnail";
-    thumbnail.textContent = "▶";
+
+    if (video.thumbnailUrl &&
+        /^https:\/\//i.test(video.thumbnailUrl)) {
+
+      const image = document.createElement("img");
+      image.src = video.thumbnailUrl;
+      image.alt = video.title || "Video thumbnail";
+      image.loading = "lazy";
+
+      image.onerror = () => {
+        thumbnail.innerHTML = "";
+        thumbnail.textContent = "▶";
+      };
+
+      thumbnail.appendChild(image);
+
+    } else {
+      thumbnail.textContent = "▶";
+    }
 
     const info = document.createElement("div");
     info.className = "video-info";
@@ -369,6 +406,7 @@ function renderVideos(data) {
       "TSh " + Number(video.price || 0).toLocaleString("en-US");
 
     const button = document.createElement("button");
+    button.className = "buy-button";
     button.textContent = english ? "Buy Video" : "Nunua Video";
 
     button.onclick = () => {
@@ -379,18 +417,23 @@ function renderVideos(data) {
       );
     };
 
-    info.append(title, description, price, button);
-    card.append(thumbnail, info);
+    info.appendChild(title);
+    info.appendChild(description);
+    info.appendChild(price);
+    info.appendChild(button);
+
+    card.appendChild(thumbnail);
+    card.appendChild(info);
+
     videosContainer.appendChild(card);
   });
 }
 
 // FIREBASE LIVE CONNECTION
-
 onSnapshot(
   collection(db, "publicVideos"),
 
-  snapshot => {
+  (snapshot) => {
     currentVideos = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -400,7 +443,7 @@ onSnapshot(
     renderVideos(currentVideos);
   },
 
-  error => {
+  (error) => {
     console.error(error);
 
     status.textContent = english
@@ -410,5 +453,6 @@ onSnapshot(
 );
 
 </script>
+
 </body>
 </html>
