@@ -137,8 +137,8 @@ button:disabled { opacity: .5; }
     <input id="videoFile" type="file" accept="video/*">
 
     <p class="small">
-      Chagua video kutoka Gallery ya simu.
-      Video itahifadhiwa kwenye private storage.
+      Chagua video ambayo tayari ipo kwenye Gallery ya simu yako.
+      Itahifadhiwa kwenye private storage.
     </p>
 
     <button id="addVideoBtn">PAKIA VIDEO</button>
@@ -154,9 +154,6 @@ button:disabled { opacity: .5; }
 </section>
 
 </div>
-
-<!-- TUS browser build -->
-<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
 
 <script type="module">
 
@@ -179,6 +176,9 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+import { createClient }
+from "https://esm.sh/@supabase/supabase-js@2";
+
 const firebaseConfig = {
   apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
   authDomain: "wakubwa-tu2.firebaseapp.com",
@@ -193,8 +193,6 @@ const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
 const SUPABASE_URL =
   "https://usaifuvsmgjtkyzvrphf.supabase.co";
 
-const SUPABASE_PROJECT_ID = "usaifuvsmgjtkyzvrphf";
-
 const SUPABASE_KEY =
   "sb_publishable_ZRo_VHCQCv6Ghv7_PxkJaA_oaQGXL0S";
 
@@ -206,6 +204,11 @@ const FUNCTION_URL =
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const loginSection = document.getElementById("loginSection");
 const dashboard = document.getElementById("dashboard");
@@ -255,6 +258,8 @@ async function getUploadToken(file) {
 
   const idToken = await user.getIdToken();
 
+  const contentType = file.type || "video/mp4";
+
   const response = await fetch(FUNCTION_URL, {
     method: "POST",
     headers: {
@@ -264,7 +269,7 @@ async function getUploadToken(file) {
     },
     body: JSON.stringify({
       fileName: file.name,
-      contentType: file.type
+      contentType: contentType
     })
   });
 
@@ -285,68 +290,6 @@ async function getUploadToken(file) {
   return result;
 }
 
-function uploadWithTus(file, path, token, onProgress) {
-  return new Promise((resolve, reject) => {
-
-    const Tus = window.tus;
-
-    if (!Tus || typeof Tus.Upload !== "function") {
-      reject(new Error(
-        "Upload library haijapakia. Refresh ukurasa ujaribu tena."
-      ));
-      return;
-    }
-
-    if (!(file instanceof Blob)) {
-      reject(new Error(
-        "Browser haijatambua faili la video. Chagua faili tena."
-      ));
-      return;
-    }
-
-    const upload = new Tus.Upload(file, {
-      endpoint:
-        `https://${SUPABASE_PROJECT_ID}.storage.supabase.co/storage/v1/upload/resumable`,
-
-      retryDelays: [0, 3000, 5000, 10000, 20000],
-
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "x-signature": token
-      },
-
-      uploadDataDuringCreation: true,
-      removeFingerprintOnSuccess: true,
-      chunkSize: 6 * 1024 * 1024,
-
-      metadata: {
-        bucketName: BUCKET,
-        objectName: path,
-        contentType: file.type || "video/mp4",
-        cacheControl: "3600"
-      },
-
-      onError(error) {
-        reject(error);
-      },
-
-      onProgress(bytesUploaded, bytesTotal) {
-        const percentage = bytesTotal > 0
-          ? Math.round((bytesUploaded / bytesTotal) * 100)
-          : 0;
-
-        onProgress(percentage);
-      },
-
-      onSuccess() {
-        resolve(path);
-      }
-    });
-
-    upload.start();
-  });
-}
-
 document.getElementById("addVideoBtn").onclick = async () => {
 
   const title =
@@ -355,8 +298,10 @@ document.getElementById("addVideoBtn").onclick = async () => {
   const description =
     document.getElementById("videoDescription").value.trim();
 
-  const price =
-    Number(document.getElementById("videoPrice").value);
+  const priceInput =
+    document.getElementById("videoPrice").value;
+
+  const price = Number(priceInput);
 
   const thumbnailUrl =
     document.getElementById("thumbnailUrl").value.trim();
@@ -364,15 +309,24 @@ document.getElementById("addVideoBtn").onclick = async () => {
   const file =
     document.getElementById("videoFile").files[0];
 
-  if (!title || !file ||
-      document.getElementById("videoPrice").value === "" ||
-      !Number.isFinite(price) || price < 0) {
+  if (
+    !title ||
+    !file ||
+    priceInput === "" ||
+    !Number.isFinite(price) ||
+    price < 0
+  ) {
     showStatus("Jaza jina, bei sahihi na chagua video.");
     return;
   }
 
   if (!file.type.startsWith("video/")) {
     showStatus("Tafadhali chagua faili la video.");
+    return;
+  }
+
+  if (!(file instanceof Blob)) {
+    showStatus("Browser haijatambua video. Chagua tena kutoka Gallery.");
     return;
   }
 
@@ -385,19 +339,28 @@ document.getElementById("addVideoBtn").onclick = async () => {
     const uploadInfo = await getUploadToken(file);
 
     if (!uploadInfo.path || !uploadInfo.token) {
-      throw new Error("Server haijatoa taarifa kamili za upload.");
+      throw new Error("Ruhusa ya kupakia video haijakamilika.");
     }
 
-    showStatus("Hatua 2/3: Tunapakia video...");
+    showStatus("Hatua 2/3: Tunatuma video kutoka Gallery...");
 
-    const videoPath = await uploadWithTus(
-      file,
-      uploadInfo.path,
-      uploadInfo.token,
-      (percentage) => {
-        showStatus("Video inapakiwa: " + percentage + "%");
-      }
-    );
+    const contentType = file.type || "video/mp4";
+
+    const { data, error } = await supabase.storage
+      .from(BUCKET)
+      .uploadToSignedUrl(
+        uploadInfo.path,
+        uploadInfo.token,
+        file,
+        {
+          contentType: contentType,
+          upsert: false
+        }
+      );
+
+    if (error) {
+      throw new Error("Supabase upload: " + error.message);
+    }
 
     showStatus("Hatua 3/3: Tunahifadhi taarifa za video...");
 
@@ -419,14 +382,14 @@ document.getElementById("addVideoBtn").onclick = async () => {
       description,
       price,
       thumbnailUrl,
-      videoPath,
+      videoPath: uploadInfo.path,
       videoFileName: file.name,
       createdAt: serverTimestamp()
     });
 
     await batch.commit();
 
-    showStatus("Video imepakiwa na taarifa zimehifadhiwa!");
+    showStatus("Hongera! Video imepakiwa na taarifa zimehifadhiwa.");
 
     document.getElementById("videoTitle").value = "";
     document.getElementById("videoDescription").value = "";
