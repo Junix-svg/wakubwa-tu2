@@ -11,155 +11,159 @@
 
 body {
   margin: 0;
-  padding: 20px 0;
+  padding: 20px 12px;
   background: #101010;
   color: white;
   font-family: Arial, sans-serif;
 }
 
-.box {
-  background: #1d1d1d;
-  padding: 22px;
-  width: 92%;
-  max-width: 500px;
-  margin: 20px auto;
-  border-radius: 14px;
+.container {
+  max-width: 650px;
+  margin: auto;
 }
 
-h2, h3 { color: #d6ad55; }
+header {
+  text-align: center;
+  color: #d6ad55;
+  margin-bottom: 25px;
+}
 
-input {
+h1 { font-size: 25px; }
+
+.card {
+  background: #1d1d1d;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+input, textarea {
   width: 100%;
   padding: 13px;
-  margin: 8px 0;
+  margin: 8px 0 14px;
   border: 1px solid #555;
   border-radius: 7px;
-  background: #292929;
+  background: #111;
   color: white;
+  font-size: 15px;
+}
+
+label {
+  color: #d6ad55;
+  font-weight: bold;
 }
 
 button {
   width: 100%;
-  padding: 13px;
+  padding: 14px;
   margin-top: 10px;
-  background: #d6ad55;
-  border: none;
+  border: 0;
   border-radius: 7px;
+  background: #d6ad55;
+  color: #111;
   font-weight: bold;
-  cursor: pointer;
+  font-size: 16px;
 }
 
-button:disabled { opacity: 0.5; }
-
-#dashboard { display: none; }
-
-#message, #videoMessage, #listMessage {
-  overflow-wrap: anywhere;
-  font-size: 14px;
+button:disabled {
+  opacity: .5;
 }
 
-#message { color: #ff7777; }
-#videoMessage, #listMessage { color: #d6ad55; }
-
-.video-item {
-  background: #292929;
-  border: 1px solid #444;
-  border-radius: 9px;
-  padding: 15px;
-  margin: 15px 0;
-}
-
-.video-preview {
-  width: 100%;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin: 10px 0;
-  background: #111;
-}
-
-.delete-btn {
-  background: #a83232;
+.secondary {
+  background: #444;
   color: white;
 }
 
-hr {
-  border: 1px solid #444;
-  margin: 22px 0;
+.video-item {
+  padding: 13px;
+  border-bottom: 1px solid #444;
+  overflow-wrap: anywhere;
 }
 
-.hint {
+#dashboard { display: none; }
+
+#status {
+  color: #d6ad55;
+  margin-top: 15px;
+  white-space: pre-wrap;
+}
+
+.small {
   color: #aaa;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-<h2>WAKUBWA TU2</h2>
-<p>Admin Dashboard</p>
+<header>
+  <h1>WAKUBWA TU2</h1>
+  <p>ADMIN DASHBOARD</p>
+</header>
 
-<div id="login">
+<section class="card" id="loginSection">
+  <h2>Admin Login</h2>
 
-<input id="email" type="email"
-placeholder="Admin Email" autocomplete="username">
+  <label>Email</label>
+  <input id="email" type="email" placeholder="Admin email">
 
-<input id="password" type="password"
-placeholder="Password" autocomplete="current-password">
+  <label>Password</label>
+  <input id="password" type="password" placeholder="Password">
 
-<button id="loginBtn">LOGIN</button>
-<p id="message"></p>
+  <button id="loginBtn">LOGIN</button>
+  <p id="loginStatus"></p>
+</section>
 
-</div>
+<section id="dashboard">
 
-<div id="dashboard">
+  <div class="card">
+    <h2>Ongeza Video</h2>
 
-<h3>Welcome, Admin!</h3>
+    <label>Jina la Video</label>
+    <input id="videoTitle" type="text"
+      placeholder="Andika jina la video">
 
-<hr>
+    <label>Maelezo</label>
+    <textarea id="videoDescription"
+      placeholder="Maelezo ya video"></textarea>
 
-<h3>Ongeza Video</h3>
+    <label>Bei ya Video (TZS)</label>
+    <input id="videoPrice" type="number"
+      min="0" placeholder="Mfano 2000">
 
-<input id="videoTitle" type="text"
-placeholder="Jina la Video">
+    <label>Thumbnail URL (hiari)</label>
+    <input id="thumbnailUrl" type="url"
+      placeholder="https://...">
 
-<input id="videoDescription" type="text"
-placeholder="Maelezo ya Video">
+    <label>Chagua Video kutoka Gallery</label>
+    <input id="videoFile" type="file"
+      accept="video/*">
 
-<input id="videoPrice" type="number"
-min="1" placeholder="Bei ya Video (TSh)">
+    <p class="small">
+      Chagua video kutoka kwenye Gallery ya simu.
+      Video itawekwa kwenye private storage.
+    </p>
 
-<input id="thumbnailUrl" type="url"
-placeholder="Kiungo cha Picha ya Video (HTTPS)">
+    <button id="addVideoBtn">PAKIA VIDEO</button>
 
-<p class="hint">
-Weka kiungo cha picha kitakachoonekana kwenye Video Card.
-</p>
+    <p id="status"></p>
+  </div>
 
-<input id="videoUrl" type="url"
-placeholder="Kiungo cha Video (HTTPS)">
+  <div class="card">
+    <h2>Video Zilizowekwa</h2>
+    <div id="videoList">Inapakia...</div>
+  </div>
 
-<button id="addVideoBtn">HIFADHI VIDEO</button>
+  <button id="logoutBtn" class="secondary">
+    LOGOUT
+  </button>
 
-<p id="videoMessage"></p>
+</section>
 
-<hr>
-
-<h3>Video Zilizopo</h3>
-
-<p id="listMessage">Inapakia video...</p>
-
-<div id="videoList"></div>
-
-<hr>
-
-<button id="logoutBtn">LOGOUT</button>
-
-</div>
 </div>
 
 <script type="module">
@@ -172,8 +176,7 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut
-}
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
   getFirestore,
@@ -182,8 +185,10 @@ import {
   writeBatch,
   getDocs,
   serverTimestamp
-}
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+import { Upload }
+from "https://esm.sh/tus-js-client@4";
 
 const firebaseConfig = {
   apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
@@ -194,132 +199,194 @@ const firebaseConfig = {
   appId: "1:399469319991:web:dc665855a312c69dacacb2"
 };
 
+const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
+
+const SUPABASE_URL =
+  "https://usaifuvsmgjtkyzvrphf.supabase.co";
+
+const SUPABASE_PROJECT_ID = "usaifuvsmgjtkyzvrphf";
+
+const SUPABASE_KEY =
+  "sb_publishable_ZRo_VHCQCv6Ghv7_PxkJaA_oaQGXL0S";
+
+const BUCKET = "wakubwa-tu2-videos";
+
+const FUNCTION_URL =
+  SUPABASE_URL + "/functions/v1/admin-video-upload";
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
-
-const login = document.getElementById("login");
+const loginSection = document.getElementById("loginSection");
 const dashboard = document.getElementById("dashboard");
+const statusBox = document.getElementById("status");
 
-const message = document.getElementById("message");
-const videoMessage = document.getElementById("videoMessage");
-const listMessage = document.getElementById("listMessage");
-
-const videoList = document.getElementById("videoList");
-
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const addVideoBtn = document.getElementById("addVideoBtn");
-
-let isAdmin = false;
-
-function validHttps(value) {
-  try {
-    return new URL(value).protocol === "https:";
-  } catch {
-    return false;
-  }
+function showStatus(message) {
+  statusBox.textContent = message;
 }
 
-// LOGIN
-
-loginBtn.onclick = async () => {
-
+document.getElementById("loginBtn").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  message.textContent = "";
-
-  if (!email || !password) {
-    message.textContent = "Weka Email na Password.";
-    return;
-  }
-
-  loginBtn.disabled = true;
+  document.getElementById("loginStatus").textContent =
+    "Inaingia...";
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (error) {
-    message.textContent = "Login imeshindikana: " + error.code;
-  } finally {
-    loginBtn.disabled = false;
+    document.getElementById("loginStatus").textContent =
+      "Login imeshindikana: " + error.message;
   }
 };
 
-// ADMIN CHECK
-
 onAuthStateChanged(auth, async (user) => {
-
-  isAdmin = !!user && user.uid === ADMIN_UID;
-
-  if (isAdmin) {
-    login.style.display = "none";
+  if (user && user.uid === ADMIN_UID) {
+    loginSection.style.display = "none";
     dashboard.style.display = "block";
-    message.textContent = "";
     await loadVideos();
   } else {
-    login.style.display = "block";
     dashboard.style.display = "none";
-    videoList.innerHTML = "";
+    loginSection.style.display = "block";
 
     if (user) {
       await signOut(auth);
-      message.textContent = "Huna ruhusa ya kuingia Admin Dashboard.";
+      document.getElementById("loginStatus").textContent =
+        "Akaunti hii haina ruhusa ya Admin.";
     }
   }
 });
 
-// ADD VIDEO
+async function getUploadToken(file) {
+  const user = auth.currentUser;
 
-addVideoBtn.onclick = async () => {
-
-  if (!auth.currentUser || !isAdmin ||
-      auth.currentUser.uid !== ADMIN_UID) {
-    videoMessage.textContent = "Huna ruhusa.";
-    return;
+  if (!user || user.uid !== ADMIN_UID) {
+    throw new Error("Admin hajathibitishwa.");
   }
 
-  const title = document.getElementById("videoTitle").value.trim();
+  const idToken = await user.getIdToken();
+
+  const response = await fetch(FUNCTION_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + idToken
+    },
+    body: JSON.stringify({
+      fileName: file.name,
+      contentType: file.type
+    })
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || "Imeshindikana kupata ruhusa ya upload.");
+  }
+
+  return result;
+}
+
+function uploadWithTus(file, path, token, onProgress) {
+  return new Promise((resolve, reject) => {
+
+    const upload = new Upload(file, {
+      endpoint:
+        `https://${SUPABASE_PROJECT_ID}.storage.supabase.co/storage/v1/upload/resumable`,
+
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "x-signature": token
+      },
+
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      chunkSize: 6 * 1024 * 1024,
+
+      metadata: {
+        bucketName: BUCKET,
+        objectName: path,
+        contentType: file.type || "application/octet-stream",
+        cacheControl: "3600"
+      },
+
+      onError(error) {
+        reject(error);
+      },
+
+      onProgress(bytesUploaded, bytesTotal) {
+        const percentage =
+          Math.round((bytesUploaded / bytesTotal) * 100);
+
+        onProgress(percentage);
+      },
+
+      onSuccess() {
+        resolve(path);
+      }
+    });
+
+    upload.start();
+  });
+}
+
+document.getElementById("addVideoBtn").onclick = async () => {
+
+  const title =
+    document.getElementById("videoTitle").value.trim();
 
   const description =
     document.getElementById("videoDescription").value.trim();
 
-  const price = Number(document.getElementById("videoPrice").value);
+  const price =
+    Number(document.getElementById("videoPrice").value);
 
   const thumbnailUrl =
     document.getElementById("thumbnailUrl").value.trim();
 
-  const videoUrl =
-    document.getElementById("videoUrl").value.trim();
+  const file =
+    document.getElementById("videoFile").files[0];
 
-  if (!title || !videoUrl ||
-      !Number.isFinite(price) || price <= 0) {
-    videoMessage.textContent = "Jaza jina, kiungo na bei sahihi.";
+  if (!title || !file || !Number.isFinite(price) || price < 0) {
+    showStatus("Jaza jina, bei sahihi na chagua video.");
     return;
   }
 
-  if (!validHttps(videoUrl)) {
-    videoMessage.textContent = "Kiungo cha video lazima kiwe HTTPS.";
+  if (!file.type.startsWith("video/")) {
+    showStatus("Tafadhali chagua faili la video.");
     return;
   }
 
-  if (thumbnailUrl && !validHttps(thumbnailUrl)) {
-    videoMessage.textContent = "Kiungo cha picha lazima kiwe HTTPS.";
-    return;
-  }
-
-  addVideoBtn.disabled = true;
-  videoMessage.textContent = "Inahifadhi...";
+  const button = document.getElementById("addVideoBtn");
+  button.disabled = true;
 
   try {
+    showStatus("Hatua 1/3: Tunapata ruhusa ya upload...");
 
-    const videoId = doc(collection(db, "publicVideos")).id;
+    const uploadInfo = await getUploadToken(file);
+
+    showStatus("Hatua 2/3: Tunapakia video...");
+
+    const videoPath = await uploadWithTus(
+      file,
+      uploadInfo.path,
+      uploadInfo.token,
+      (percentage) => {
+        showStatus("Video inapakiwa: " + percentage + "%");
+      }
+    );
+
+    showStatus("Hatua 3/3: Tunahifadhi taarifa za video...");
+
+    const videoRef = doc(collection(db, "publicVideos"));
+    const adminRef = doc(db, "adminData", videoRef.id);
 
     const batch = writeBatch(db);
 
-    batch.set(doc(db, "publicVideos", videoId), {
+    batch.set(videoRef, {
       title,
       description,
       price,
@@ -327,227 +394,77 @@ addVideoBtn.onclick = async () => {
       createdAt: serverTimestamp()
     });
 
-    batch.set(doc(db, "adminData", videoId), {
+    batch.set(adminRef, {
       title,
       description,
       price,
       thumbnailUrl,
-      videoUrl,
+      videoPath,
+      videoFileName: file.name,
       createdAt: serverTimestamp()
     });
 
     await batch.commit();
 
-    videoMessage.textContent = "Video imehifadhiwa vizuri!";
+    showStatus("Video imepakiwa na taarifa zimehifadhiwa!");
 
     document.getElementById("videoTitle").value = "";
     document.getElementById("videoDescription").value = "";
     document.getElementById("videoPrice").value = "";
     document.getElementById("thumbnailUrl").value = "";
-    document.getElementById("videoUrl").value = "";
+    document.getElementById("videoFile").value = "";
 
     await loadVideos();
 
   } catch (error) {
-
-    videoMessage.textContent = "Hitilafu: " + error.code;
-
+    showStatus("KOSA: " + error.message);
   } finally {
-    addVideoBtn.disabled = false;
+    button.disabled = false;
   }
 };
 
-// LOAD VIDEOS
-
 async function loadVideos() {
-
-  videoList.innerHTML = "";
-  listMessage.textContent = "Inapakia video...";
+  const list = document.getElementById("videoList");
+  list.textContent = "Inapakia video...";
 
   try {
-
     const snapshot = await getDocs(collection(db, "adminData"));
 
+    list.innerHTML = "";
+
     if (snapshot.empty) {
-      listMessage.textContent = "Bado hakuna video zilizowekwa.";
+      list.textContent = "Hakuna video zilizowekwa.";
       return;
     }
 
-    listMessage.textContent = "";
-
     snapshot.forEach((item) => {
-
       const video = item.data();
 
-      const card = document.createElement("div");
-      card.className = "video-item";
+      const div = document.createElement("div");
+      div.className = "video-item";
 
-      const preview = document.createElement("img");
-      preview.className = "video-preview";
-      preview.alt = "Picha ya video";
+      const heading = document.createElement("strong");
+      heading.textContent = video.title || "Video";
 
-      const title = document.createElement("input");
-      title.value = video.title || "";
-      title.placeholder = "Jina la Video";
+      const details = document.createElement("p");
+      details.textContent =
+        "Bei: TZS " + (video.price ?? 0);
 
-      const description = document.createElement("input");
-      description.value = video.description || "";
-      description.placeholder = "Maelezo";
+      const filename = document.createElement("p");
+      filename.className = "small";
+      filename.textContent =
+        video.videoFileName || "Video imehifadhiwa";
 
-      const price = document.createElement("input");
-      price.type = "number";
-      price.min = "1";
-      price.value = video.price || "";
-
-      const thumbnail = document.createElement("input");
-      thumbnail.type = "url";
-      thumbnail.value = video.thumbnailUrl || "";
-      thumbnail.placeholder = "Kiungo cha Picha (HTTPS)";
-
-      const url = document.createElement("input");
-      url.type = "url";
-      url.value = video.videoUrl || "";
-      url.placeholder = "Kiungo cha Video (HTTPS)";
-
-      function updatePreview() {
-        if (validHttps(thumbnail.value.trim())) {
-          preview.src = thumbnail.value.trim();
-          preview.style.display = "block";
-        } else {
-          preview.removeAttribute("src");
-          preview.style.display = "none";
-        }
-      }
-
-      thumbnail.oninput = updatePreview;
-      updatePreview();
-
-      const saveBtn = document.createElement("button");
-      saveBtn.textContent = "HIFADHI MABADILIKO";
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "FUTA VIDEO";
-      deleteBtn.className = "delete-btn";
-
-      const status = document.createElement("p");
-
-      saveBtn.onclick = async () => {
-
-        const newTitle = title.value.trim();
-        const newDescription = description.value.trim();
-        const newPrice = Number(price.value);
-        const newThumbnail = thumbnail.value.trim();
-        const newUrl = url.value.trim();
-
-        if (!newTitle || !newUrl ||
-            !Number.isFinite(newPrice) || newPrice <= 0) {
-          status.textContent = "Jaza taarifa sahihi.";
-          return;
-        }
-
-        if (!validHttps(newUrl)) {
-          status.textContent = "Kiungo cha video lazima kiwe HTTPS.";
-          return;
-        }
-
-        if (newThumbnail && !validHttps(newThumbnail)) {
-          status.textContent = "Kiungo cha picha lazima kiwe HTTPS.";
-          return;
-        }
-
-        saveBtn.disabled = true;
-        status.textContent = "Inasasisha...";
-
-        try {
-
-          const batch = writeBatch(db);
-
-          batch.update(doc(db, "adminData", item.id), {
-            title: newTitle,
-            description: newDescription,
-            price: newPrice,
-            thumbnailUrl: newThumbnail,
-            videoUrl: newUrl
-          });
-
-          batch.update(doc(db, "publicVideos", item.id), {
-            title: newTitle,
-            description: newDescription,
-            price: newPrice,
-            thumbnailUrl: newThumbnail
-          });
-
-          await batch.commit();
-
-          status.textContent = "Mabadiliko yamehifadhiwa!";
-
-        } catch (error) {
-
-          status.textContent = "Hitilafu: " + error.code;
-
-        } finally {
-          saveBtn.disabled = false;
-        }
-      };
-
-      deleteBtn.onclick = async () => {
-
-        const confirmed = confirm(
-          "Una uhakika unataka kufuta video hii?"
-        );
-
-        if (!confirmed) return;
-
-        deleteBtn.disabled = true;
-        status.textContent = "Inafuta...";
-
-        try {
-
-          const batch = writeBatch(db);
-
-          batch.delete(doc(db, "adminData", item.id));
-          batch.delete(doc(db, "publicVideos", item.id));
-
-          await batch.commit();
-
-          card.remove();
-
-          if (videoList.children.length === 0) {
-            listMessage.textContent = "Bado hakuna video zilizowekwa.";
-          }
-
-        } catch (error) {
-
-          status.textContent = "Hitilafu: " + error.code;
-          deleteBtn.disabled = false;
-
-        }
-      };
-
-      card.appendChild(preview);
-      card.appendChild(title);
-      card.appendChild(description);
-      card.appendChild(price);
-      card.appendChild(thumbnail);
-      card.appendChild(url);
-      card.appendChild(saveBtn);
-      card.appendChild(deleteBtn);
-      card.appendChild(status);
-
-      videoList.appendChild(card);
-
+      div.append(heading, details, filename);
+      list.appendChild(div);
     });
 
   } catch (error) {
-
-    listMessage.textContent = "Imeshindikana kupakia: " + error.code;
-
+    list.textContent = "Imeshindikana kupakia orodha: " + error.message;
   }
 }
 
-// LOGOUT
-
-logoutBtn.onclick = async () => {
+document.getElementById("logoutBtn").onclick = async () => {
   await signOut(auth);
 };
 
