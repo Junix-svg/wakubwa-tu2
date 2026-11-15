@@ -13,15 +13,19 @@ header{text-align:center;color:#d6ad55}
 .card{background:#1d1d1d;border:1px solid #444;border-radius:12px;padding:18px;margin:18px 0}
 label{color:#d6ad55;font-weight:bold}
 input,textarea{width:100%;padding:13px;margin:8px 0 14px;border:1px solid #555;border-radius:7px;background:#111;color:white;font-size:15px}
-button{width:100%;padding:14px;margin-top:10px;border:0;border-radius:7px;background:#d6ad55;color:#111;font-weight:bold;font-size:16px}
+button{width:100%;padding:13px;margin-top:9px;border:0;border-radius:7px;background:#d6ad55;color:#111;font-weight:bold;font-size:15px}
 button:disabled{opacity:.5}
 .secondary{background:#444;color:white}
+.edit{background:#d6ad55;color:#111}
+.delete{background:#a83232;color:white}
 #dashboard{display:none}
 #status{color:#d6ad55;white-space:pre-wrap}
 #imagePreview{display:none;width:100%;max-height:230px;object-fit:contain;background:#111;border-radius:8px}
-.video-item{padding:12px;border-bottom:1px solid #444}
+.video-item{padding:14px 0;border-bottom:1px solid #444}
 .video-item img{width:100%;max-height:180px;object-fit:cover;border-radius:8px}
 .small{color:#aaa;font-size:13px}
+.actions{display:flex;gap:10px}
+.actions button{flex:1}
 </style>
 </head>
 <body>
@@ -57,7 +61,7 @@ button:disabled{opacity:.5}
 <label>Chagua Picha kutoka Gallery</label>
 <input id="thumbnailFile" type="file" accept="image/*,.heic,.heif,.avif">
 <img id="imagePreview" alt="Preview ya picha">
-<p class="small">Picha itabadilishwa kuwa JPEG ndogo kabla ya kuhifadhiwa.</p>
+<p class="small">Picha itabadilishwa kuwa JPEG kabla ya kuhifadhiwa.</p>
 
 <label>Chagua Video kutoka Gallery</label>
 <input id="videoFile" type="file" accept="video/*">
@@ -101,7 +105,9 @@ const ADMIN_UID="5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
 const SUPABASE_URL="https://usaifuvsmgjtkyzvrphf.supabase.co";
 const SUPABASE_KEY="sb_publishable_ZRo_VHCQCv6Ghv7_PxkJaA_oaQGXL0S";
 const BUCKET="wakubwa-tu2-videos";
+
 const FUNCTION_URL=SUPABASE_URL+"/functions/v1/admin-video-upload";
+const DELETE_FUNCTION_URL=SUPABASE_URL+"/functions/v1/admin-video-delete";
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
@@ -112,12 +118,17 @@ const showStatus=m=>$("status").textContent=m;
 
 /* LOGIN */
 $("loginBtn").onclick=async()=>{
+ $("loginBtn").disabled=true;
  $("loginStatus").textContent="Inaingia...";
  try{
-  await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
+  await signInWithEmailAndPassword(
+   auth,$("email").value.trim(),$("password").value
+  );
   $("loginStatus").textContent="";
  }catch(e){
   $("loginStatus").textContent="Login: "+e.message;
+ }finally{
+  $("loginBtn").disabled=false;
  }
 };
 
@@ -139,7 +150,6 @@ onAuthStateChanged(auth,async user=>{
 /* BADILISHA PICHA KUWA JPEG */
 async function prepareThumbnail(file){
  if(!file)throw new Error("Chagua picha kwanza.");
-
  let bitmap=null;
  let source=file;
 
@@ -184,7 +194,6 @@ async function prepareThumbnail(file){
   ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
 
   return canvas.toDataURL("image/jpeg",0.65);
-
  }finally{
   if(bitmap)bitmap.close();
  }
@@ -265,7 +274,8 @@ $("addVideoBtn").onclick=async()=>{
  const imageFile=$("thumbnailFile").files[0];
  const videoFile=$("videoFile").files[0];
 
- if(!title||!imageFile||!videoFile||priceText===""||!Number.isFinite(price)||price<0){
+ if(!title||!imageFile||!videoFile||priceText===""||
+    !Number.isFinite(price)||price<0){
   showStatus("Jaza jina, bei, picha na video.");
   return;
  }
@@ -294,24 +304,22 @@ $("addVideoBtn").onclick=async()=>{
   const adminRef=doc(db,"adminData",publicRef.id);
   const batch=writeBatch(db);
 
-  /* HOME PAGE: HIFADHI PICHA KWA MAJINA YOTE MAWILI */
   batch.set(publicRef,{
-   title:title,
-   description:description,
-   price:price,
-   thumbnailDataUrl:thumbnailDataUrl,
+   title,
+   description,
+   price,
+   thumbnailDataUrl,
    thumbnailUrl:thumbnailDataUrl,
    createdAt:serverTimestamp()
   });
 
-  /* ADMIN DATA */
   batch.set(adminRef,{
-   title:title,
-   description:description,
-   price:price,
-   thumbnailDataUrl:thumbnailDataUrl,
+   title,
+   description,
+   price,
+   thumbnailDataUrl,
    thumbnailUrl:thumbnailDataUrl,
-   videoPath:videoPath,
+   videoPath,
    videoFileName:videoFile.name,
    contentType:videoFile.type||"video/mp4",
    createdAt:serverTimestamp()
@@ -338,6 +346,113 @@ $("addVideoBtn").onclick=async()=>{
  }
 };
 
+/* HARIRI VIDEO */
+async function editVideo(id,v){
+ const newTitle=prompt("Andika jina jipya la video:",v.title||"");
+ if(newTitle===null)return;
+
+ const newDescription=prompt("Andika maelezo mapya:",v.description||"");
+ if(newDescription===null)return;
+
+ const newPriceText=prompt("Andika bei mpya ya TZS:",String(v.price??0));
+ if(newPriceText===null)return;
+
+ const newPrice=Number(newPriceText);
+
+ if(!newTitle.trim()||newPriceText.trim()===""||
+    !Number.isFinite(newPrice)||newPrice<0){
+  alert("Jina au bei si sahihi.");
+  return;
+ }
+
+ try{
+  showStatus("Tunahifadhi mabadiliko...");
+
+  const batch=writeBatch(db);
+
+  batch.update(doc(db,"adminData",id),{
+   title:newTitle.trim(),
+   description:newDescription.trim(),
+   price:newPrice
+  });
+
+  batch.update(doc(db,"publicVideos",id),{
+   title:newTitle.trim(),
+   description:newDescription.trim(),
+   price:newPrice
+  });
+
+  await batch.commit();
+
+  showStatus("Video imehaririwa kikamilifu.");
+  await loadVideos();
+
+ }catch(e){
+  console.error(e);
+  showStatus("KOSA LA KUHARIRI: "+e.message);
+ }
+}
+
+/* FUTA VIDEO */
+async function deleteVideo(id,v){
+ if(!v.videoPath){
+  alert("Video hii haina videoPath. Haijafutwa ili kuepusha kuacha faili lisilojulikana.");
+  return;
+ }
+
+ const confirmed=confirm(
+  "Una uhakika unataka kufuta video hii? Hatua hii haiwezi kurudishwa."
+ );
+
+ if(!confirmed)return;
+
+ try{
+  showStatus("Tunathibitisha ruhusa ya kufuta...");
+
+  const user=auth.currentUser;
+
+  if(!user||user.uid!==ADMIN_UID){
+   throw new Error("Admin hajathibitishwa.");
+  }
+
+  const idToken=await user.getIdToken();
+
+  const response=await fetch(DELETE_FUNCTION_URL,{
+   method:"POST",
+   headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+idToken,
+    "apikey":SUPABASE_KEY
+   },
+   body:JSON.stringify({
+    firebaseIdToken:idToken,
+    videoPath:v.videoPath
+   })
+  });
+
+  const result=await response.json();
+
+  if(!response.ok||!result.success){
+   throw new Error(result.error||"Imeshindikana kufuta faili la video.");
+  }
+
+  showStatus("Faili limefutwa. Tunafuta taarifa...");
+
+  const batch=writeBatch(db);
+  batch.delete(doc(db,"adminData",id));
+  batch.delete(doc(db,"publicVideos",id));
+
+  await batch.commit();
+
+  showStatus("Video imefutwa kikamilifu.");
+  await loadVideos();
+
+ }catch(e){
+  console.error(e);
+  showStatus("KOSA LA KUFUTA: "+e.message);
+ }
+}
+
 /* ORODHA YA ADMIN */
 async function loadVideos(){
  const list=$("videoList");
@@ -354,6 +469,8 @@ async function loadVideos(){
 
   snap.forEach(item=>{
    const v=item.data();
+   const id=item.id;
+
    const div=document.createElement("div");
    div.className="video-item";
 
@@ -366,17 +483,36 @@ async function loadVideos(){
     div.appendChild(img);
    }
 
-   const heading=document.createElement("strong");
+   const heading=document.createElement("h3");
    heading.textContent=v.title||"Video";
 
+   const description=document.createElement("p");
+   description.textContent=v.description||"";
+
    const details=document.createElement("p");
+   details.className="small";
    details.textContent="Bei: TZS "+(v.price??0);
 
-   div.append(heading,details);
+   const actions=document.createElement("div");
+   actions.className="actions";
+
+   const editBtn=document.createElement("button");
+   editBtn.className="edit";
+   editBtn.textContent="HARIRI";
+   editBtn.onclick=()=>editVideo(id,v);
+
+   const deleteBtn=document.createElement("button");
+   deleteBtn.className="delete";
+   deleteBtn.textContent="FUTA";
+   deleteBtn.onclick=()=>deleteVideo(id,v);
+
+   actions.append(editBtn,deleteBtn);
+   div.append(heading,description,details,actions);
    list.appendChild(div);
   });
 
  }catch(e){
+  console.error(e);
   list.textContent="Kosa: "+e.message;
  }
 }
