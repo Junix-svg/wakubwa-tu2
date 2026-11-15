@@ -17,10 +17,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.container {
-  max-width: 650px;
-  margin: auto;
-}
+.container { max-width: 650px; margin: auto; }
 
 header {
   text-align: center;
@@ -66,9 +63,7 @@ button {
   font-size: 16px;
 }
 
-button:disabled {
-  opacity: .5;
-}
+button:disabled { opacity: .5; }
 
 .secondary {
   background: #444;
@@ -97,7 +92,6 @@ button:disabled {
 </head>
 
 <body>
-
 <div class="container">
 
 <header>
@@ -140,8 +134,7 @@ button:disabled {
       placeholder="https://...">
 
     <label>Chagua Video kutoka Gallery</label>
-    <input id="videoFile" type="file"
-      accept="video/*">
+    <input id="videoFile" type="file" accept="video/*">
 
     <p class="small">
       Chagua video kutoka kwenye Gallery ya simu.
@@ -149,7 +142,6 @@ button:disabled {
     </p>
 
     <button id="addVideoBtn">PAKIA VIDEO</button>
-
     <p id="status"></p>
   </div>
 
@@ -158,10 +150,7 @@ button:disabled {
     <div id="videoList">Inapakia...</div>
   </div>
 
-  <button id="logoutBtn" class="secondary">
-    LOGOUT
-  </button>
-
+  <button id="logoutBtn" class="secondary">LOGOUT</button>
 </section>
 
 </div>
@@ -230,8 +219,7 @@ document.getElementById("loginBtn").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  document.getElementById("loginStatus").textContent =
-    "Inaingia...";
+  document.getElementById("loginStatus").textContent = "Inaingia...";
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -271,7 +259,8 @@ async function getUploadToken(file) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + idToken
+      "Authorization": "Bearer " + idToken,
+      "apikey": SUPABASE_KEY
     },
     body: JSON.stringify({
       fileName: file.name,
@@ -282,7 +271,9 @@ async function getUploadToken(file) {
   const result = await response.json();
 
   if (!response.ok || !result.success) {
-    throw new Error(result.error || "Imeshindikana kupata ruhusa ya upload.");
+    throw new Error(
+      result.error || "Imeshindikana kupata ruhusa ya upload."
+    );
   }
 
   return result;
@@ -447,8 +438,7 @@ async function loadVideos() {
       heading.textContent = video.title || "Video";
 
       const details = document.createElement("p");
-      details.textContent =
-        "Bei: TZS " + (video.price ?? 0);
+      details.textContent = "Bei: TZS " + (video.price ?? 0);
 
       const filename = document.createElement("p");
       filename.className = "small";
@@ -460,7 +450,8 @@ async function loadVideos() {
     });
 
   } catch (error) {
-    list.textContent = "Imeshindikana kupakia orodha: " + error.message;
+    list.textContent =
+      "Imeshindikana kupakia orodha: " + error.message;
   }
 }
 
@@ -469,6 +460,5 @@ document.getElementById("logoutBtn").onclick = async () => {
 };
 
 </script>
-
 </body>
 </html>
