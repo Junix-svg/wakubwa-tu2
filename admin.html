@@ -26,7 +26,10 @@ button:disabled{opacity:.5}
 </head>
 <body>
 <div class="container">
-<header><h1>WAKUBWA TU2</h1><p>ADMIN DASHBOARD</p></header>
+<header>
+<h1>WAKUBWA TU2</h1>
+<p>ADMIN DASHBOARD</p>
+</header>
 
 <section class="card" id="loginSection">
 <h2>Admin Login</h2>
@@ -41,17 +44,20 @@ button:disabled{opacity:.5}
 <section id="dashboard">
 <div class="card">
 <h2>Ongeza Video</h2>
+
 <label>Jina la Video</label>
 <input id="videoTitle" placeholder="Jina la video">
+
 <label>Maelezo</label>
 <textarea id="videoDescription" placeholder="Maelezo ya video"></textarea>
+
 <label>Bei (TZS)</label>
 <input id="videoPrice" type="number" min="0" placeholder="Mfano 2000">
 
 <label>Chagua Picha kutoka Gallery</label>
 <input id="thumbnailFile" type="file" accept="image/*,.heic,.heif,.avif">
 <img id="imagePreview" alt="Preview ya picha">
-<p class="small">JPG, PNG, WebP, GIF, BMP, AVIF na HEIC/HEIF (ikiwa browser inaweza kuisoma au kuibadilisha).</p>
+<p class="small">Picha itabadilishwa kuwa JPEG ndogo kabla ya kuhifadhiwa.</p>
 
 <label>Chagua Video kutoka Gallery</label>
 <input id="videoFile" type="file" accept="video/*">
@@ -64,14 +70,22 @@ button:disabled{opacity:.5}
 <h2>Video Zilizowekwa</h2>
 <div id="videoList">Inapakia...</div>
 </div>
+
 <button id="logoutBtn" class="secondary">LOGOUT</button>
 </section>
 </div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,collection,doc,writeBatch,getDocs,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+import {
+ getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+import {
+ getFirestore,collection,doc,writeBatch,getDocs,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
 
 const firebaseConfig={
@@ -82,6 +96,7 @@ const firebaseConfig={
  messagingSenderId:"399469319991",
  appId:"1:399469319991:web:dc665855a312c69dacacb2"
 };
+
 const ADMIN_UID="5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
 const SUPABASE_URL="https://usaifuvsmgjtkyzvrphf.supabase.co";
 const SUPABASE_KEY="sb_publishable_ZRo_VHCQCv6Ghv7_PxkJaA_oaQGXL0S";
@@ -101,8 +116,11 @@ $("loginBtn").onclick=async()=>{
  try{
   await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
   $("loginStatus").textContent="";
- }catch(e){$("loginStatus").textContent="Login: "+e.message;}
+ }catch(e){
+  $("loginStatus").textContent="Login: "+e.message;
+ }
 };
+
 onAuthStateChanged(auth,async user=>{
  if(user&&user.uid===ADMIN_UID){
   $("loginSection").style.display="none";
@@ -111,11 +129,14 @@ onAuthStateChanged(auth,async user=>{
  }else{
   $("dashboard").style.display="none";
   $("loginSection").style.display="block";
-  if(user){await signOut(auth);$("loginStatus").textContent="Admin pekee anaruhusiwa.";}
+  if(user){
+   await signOut(auth);
+   $("loginStatus").textContent="Admin pekee anaruhusiwa.";
+  }
  }
 });
 
-/* SOMA PICHA NA KUIBADILISHA JPEG */
+/* BADILISHA PICHA KUWA JPEG */
 async function prepareThumbnail(file){
  if(!file)throw new Error("Chagua picha kwanza.");
 
@@ -126,17 +147,26 @@ async function prepareThumbnail(file){
   try{
    bitmap=await createImageBitmap(source);
   }catch(firstError){
-   const n=file.name.toLowerCase();
-   const t=(file.type||"").toLowerCase();
+   const name=file.name.toLowerCase();
+   const type=(file.type||"").toLowerCase();
 
-   if(n.endsWith(".heic")||n.endsWith(".heif")||t.includes("heic")||t.includes("heif")){
-    showStatus("Tunabadilisha HEIC kuwa JPEG...");
+   if(
+    name.endsWith(".heic")||
+    name.endsWith(".heif")||
+    type.includes("heic")||
+    type.includes("heif")
+   ){
+    showStatus("Tunabadilisha picha ya HEIC...");
     const mod=await import("https://esm.sh/heic2any@0.0.4");
-    const result=await mod.default({blob:file,toType:"image/jpeg",quality:0.85});
+    const result=await mod.default({
+     blob:file,
+     toType:"image/jpeg",
+     quality:0.85
+    });
     source=Array.isArray(result)?result[0]:result;
     bitmap=await createImageBitmap(source);
    }else{
-    throw new Error("Chrome haiwezi kusoma picha hii. Jaribu kuifungua na kuihifadhi kama JPG.");
+    throw new Error("Chrome imeshindwa kusoma picha hii. Jaribu JPG au PNG.");
    }
   }
 
@@ -145,57 +175,88 @@ async function prepareThumbnail(file){
   const canvas=document.createElement("canvas");
   canvas.width=Math.max(1,Math.round(bitmap.width*ratio));
   canvas.height=Math.max(1,Math.round(bitmap.height*ratio));
+
   const ctx=canvas.getContext("2d");
   if(!ctx)throw new Error("Imeshindikana kutengeneza picha.");
+
   ctx.fillStyle="#fff";
   ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+
   return canvas.toDataURL("image/jpeg",0.65);
+
  }finally{
   if(bitmap)bitmap.close();
  }
 }
 
-/* PREVIEW */
+/* PREVIEW YA PICHA */
 $("thumbnailFile").addEventListener("change",async()=>{
  $("imagePreview").style.display="none";
  const file=$("thumbnailFile").files[0];
  if(!file)return;
+
  try{
   showStatus("Tunafungua picha...");
   const result=await prepareThumbnail(file);
   $("imagePreview").src=result;
   $("imagePreview").style.display="block";
   showStatus("Picha imekubali. Unaweza kuendelea.");
- }catch(e){showStatus("KOSA: "+e.message);}
+ }catch(e){
+  showStatus("KOSA: "+e.message);
+ }
 });
 
-/* RUHUSA YA VIDEO */
+/* PATA RUHUSA YA UPLOAD */
 async function getUploadToken(file){
  const user=auth.currentUser;
- if(!user||user.uid!==ADMIN_UID)throw new Error("Admin hajathibitishwa.");
- const token=await user.getIdToken();
+
+ if(!user||user.uid!==ADMIN_UID){
+  throw new Error("Admin hajathibitishwa.");
+ }
+
+ const idToken=await user.getIdToken();
+
  const response=await fetch(FUNCTION_URL,{
   method:"POST",
-  headers:{"Content-Type":"application/json","Authorization":"Bearer "+token,"apikey":SUPABASE_KEY},
-  body:JSON.stringify({fileName:file.name,contentType:file.type||"video/mp4"})
+  headers:{
+   "Content-Type":"application/json",
+   "Authorization":"Bearer "+idToken,
+   "apikey":SUPABASE_KEY
+  },
+  body:JSON.stringify({
+   fileName:file.name,
+   contentType:file.type||"video/mp4"
+  })
  });
+
  const result=await response.json();
- if(!response.ok||!result.success)throw new Error(result.error||"Ruhusa ya upload imeshindikana.");
+
+ if(!response.ok||!result.success){
+  throw new Error(result.error||"Ruhusa ya upload imeshindikana.");
+ }
+
  return result;
 }
 
 /* PAKIA VIDEO */
 async function uploadVideo(file,info){
- const {data,error}=await supabase.storage.from(BUCKET).uploadToSignedUrl(
-  info.path,info.token,file,{contentType:file.type||"video/mp4"}
- );
+ const {data,error}=await supabase.storage
+  .from(BUCKET)
+  .uploadToSignedUrl(
+   info.path,
+   info.token,
+   file,
+   {contentType:file.type||"video/mp4"}
+  );
+
  if(error)throw new Error("Supabase: "+error.message);
  if(!data)throw new Error("Upload haijathibitishwa.");
+
  return data.path;
 }
 
-/* HIFADHI VIDEO NA PICHA */
+/* ONGEZA VIDEO */
 $("addVideoBtn").onclick=async()=>{
  const title=$("videoTitle").value.trim();
  const description=$("videoDescription").value.trim();
@@ -208,6 +269,7 @@ $("addVideoBtn").onclick=async()=>{
   showStatus("Jaza jina, bei, picha na video.");
   return;
  }
+
  if(!videoFile.type.startsWith("video/")){
   showStatus("Chagua faili la video.");
   return;
@@ -215,6 +277,7 @@ $("addVideoBtn").onclick=async()=>{
 
  const button=$("addVideoBtn");
  button.disabled=true;
+
  try{
   showStatus("Hatua 1/4: Tunatengeneza picha...");
   const thumbnailDataUrl=await prepareThumbnail(imageFile);
@@ -226,64 +289,100 @@ $("addVideoBtn").onclick=async()=>{
   const videoPath=await uploadVideo(videoFile,info);
 
   showStatus("Hatua 4/4: Tunahifadhi taarifa...");
+
   const publicRef=doc(collection(db,"publicVideos"));
   const adminRef=doc(db,"adminData",publicRef.id);
   const batch=writeBatch(db);
 
+  /* HOME PAGE: HIFADHI PICHA KWA MAJINA YOTE MAWILI */
   batch.set(publicRef,{
-   title,description,price,thumbnailDataUrl,
+   title:title,
+   description:description,
+   price:price,
+   thumbnailDataUrl:thumbnailDataUrl,
+   thumbnailUrl:thumbnailDataUrl,
    createdAt:serverTimestamp()
   });
+
+  /* ADMIN DATA */
   batch.set(adminRef,{
-   title,description,price,thumbnailDataUrl,
-   videoPath,videoFileName:videoFile.name,
+   title:title,
+   description:description,
+   price:price,
+   thumbnailDataUrl:thumbnailDataUrl,
+   thumbnailUrl:thumbnailDataUrl,
+   videoPath:videoPath,
+   videoFileName:videoFile.name,
    contentType:videoFile.type||"video/mp4",
    createdAt:serverTimestamp()
   });
+
   await batch.commit();
 
   showStatus("Hongera! Video na picha vimehifadhiwa.");
+
   $("videoTitle").value="";
   $("videoDescription").value="";
   $("videoPrice").value="";
   $("thumbnailFile").value="";
   $("videoFile").value="";
   $("imagePreview").style.display="none";
+
   await loadVideos();
+
  }catch(e){
   console.error(e);
   showStatus("KOSA: "+e.message);
- }finally{button.disabled=false;}
+ }finally{
+  button.disabled=false;
+ }
 };
 
 /* ORODHA YA ADMIN */
 async function loadVideos(){
  const list=$("videoList");
  list.textContent="Inapakia...";
+
  try{
   const snap=await getDocs(collection(db,"adminData"));
   list.innerHTML="";
-  if(snap.empty){list.textContent="Hakuna video zilizowekwa.";return;}
+
+  if(snap.empty){
+   list.textContent="Hakuna video zilizowekwa.";
+   return;
+  }
+
   snap.forEach(item=>{
    const v=item.data();
    const div=document.createElement("div");
    div.className="video-item";
-   if(v.thumbnailDataUrl){
+
+   const imageSource=v.thumbnailDataUrl||v.thumbnailUrl;
+
+   if(imageSource){
     const img=document.createElement("img");
-    img.src=v.thumbnailDataUrl;
+    img.src=imageSource;
     img.alt=v.title||"Picha ya video";
     div.appendChild(img);
    }
-   const h=document.createElement("strong");
-   h.textContent=v.title||"Video";
-   const p=document.createElement("p");
-   p.textContent="Bei: TZS "+(v.price??0);
-   div.append(h,p);
+
+   const heading=document.createElement("strong");
+   heading.textContent=v.title||"Video";
+
+   const details=document.createElement("p");
+   details.textContent="Bei: TZS "+(v.price??0);
+
+   div.append(heading,details);
    list.appendChild(div);
   });
- }catch(e){list.textContent="Kosa: "+e.message;}
+
+ }catch(e){
+  list.textContent="Kosa: "+e.message;
+ }
 }
+
 $("logoutBtn").onclick=()=>signOut(auth);
+
 </script>
 </body>
 </html>
