@@ -127,7 +127,7 @@ button:disabled { opacity: .5; }
 
     <label>Bei ya Video (TZS)</label>
     <input id="videoPrice" type="number"
-      min="0" placeholder="Mfano 2000">
+      min="0" step="1" placeholder="Mfano 2000">
 
     <label>Thumbnail URL (hiari)</label>
     <input id="thumbnailUrl" type="url"
@@ -137,8 +137,8 @@ button:disabled { opacity: .5; }
     <input id="videoFile" type="file" accept="video/*">
 
     <p class="small">
-      Chagua video kutoka kwenye Gallery ya simu.
-      Video itawekwa kwenye private storage.
+      Chagua video kutoka Gallery ya simu.
+      Video itahifadhiwa kwenye private storage.
     </p>
 
     <button id="addVideoBtn">PAKIA VIDEO</button>
@@ -154,6 +154,9 @@ button:disabled { opacity: .5; }
 </section>
 
 </div>
+
+<!-- TUS browser build -->
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"></script>
 
 <script type="module">
 
@@ -175,9 +178,6 @@ import {
   getDocs,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-import { Upload }
-from "https://esm.sh/tus-js-client@4";
 
 const firebaseConfig = {
   apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
@@ -268,7 +268,13 @@ async function getUploadToken(file) {
     })
   });
 
-  const result = await response.json();
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error("Server haikurudisha majibu sahihi.");
+  }
 
   if (!response.ok || !result.success) {
     throw new Error(
@@ -282,7 +288,23 @@ async function getUploadToken(file) {
 function uploadWithTus(file, path, token, onProgress) {
   return new Promise((resolve, reject) => {
 
-    const upload = new Upload(file, {
+    const Tus = window.tus;
+
+    if (!Tus || typeof Tus.Upload !== "function") {
+      reject(new Error(
+        "Upload library haijapakia. Refresh ukurasa ujaribu tena."
+      ));
+      return;
+    }
+
+    if (!(file instanceof Blob)) {
+      reject(new Error(
+        "Browser haijatambua faili la video. Chagua faili tena."
+      ));
+      return;
+    }
+
+    const upload = new Tus.Upload(file, {
       endpoint:
         `https://${SUPABASE_PROJECT_ID}.storage.supabase.co/storage/v1/upload/resumable`,
 
@@ -300,7 +322,7 @@ function uploadWithTus(file, path, token, onProgress) {
       metadata: {
         bucketName: BUCKET,
         objectName: path,
-        contentType: file.type || "application/octet-stream",
+        contentType: file.type || "video/mp4",
         cacheControl: "3600"
       },
 
@@ -309,8 +331,9 @@ function uploadWithTus(file, path, token, onProgress) {
       },
 
       onProgress(bytesUploaded, bytesTotal) {
-        const percentage =
-          Math.round((bytesUploaded / bytesTotal) * 100);
+        const percentage = bytesTotal > 0
+          ? Math.round((bytesUploaded / bytesTotal) * 100)
+          : 0;
 
         onProgress(percentage);
       },
@@ -341,7 +364,9 @@ document.getElementById("addVideoBtn").onclick = async () => {
   const file =
     document.getElementById("videoFile").files[0];
 
-  if (!title || !file || !Number.isFinite(price) || price < 0) {
+  if (!title || !file ||
+      document.getElementById("videoPrice").value === "" ||
+      !Number.isFinite(price) || price < 0) {
     showStatus("Jaza jina, bei sahihi na chagua video.");
     return;
   }
@@ -358,6 +383,10 @@ document.getElementById("addVideoBtn").onclick = async () => {
     showStatus("Hatua 1/3: Tunapata ruhusa ya upload...");
 
     const uploadInfo = await getUploadToken(file);
+
+    if (!uploadInfo.path || !uploadInfo.token) {
+      throw new Error("Server haijatoa taarifa kamili za upload.");
+    }
 
     showStatus("Hatua 2/3: Tunapakia video...");
 
@@ -408,7 +437,8 @@ document.getElementById("addVideoBtn").onclick = async () => {
     await loadVideos();
 
   } catch (error) {
-    showStatus("KOSA: " + error.message);
+    console.error("Video upload error:", error);
+    showStatus("KOSA: " + (error.message || "Hitilafu isiyojulikana."));
   } finally {
     button.disabled = false;
   }
