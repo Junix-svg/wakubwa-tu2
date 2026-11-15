@@ -137,7 +137,7 @@ button:disabled { opacity: .5; }
     <input id="videoFile" type="file" accept="video/*">
 
     <p class="small">
-      Chagua video iliyopo kwenye Gallery ya simu.
+      Chagua video kutoka kwenye Gallery ya simu.
       Video itahifadhiwa kwenye private storage.
     </p>
 
@@ -176,6 +176,9 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+import { createClient }
+from "https://esm.sh/@supabase/supabase-js@2";
+
 const firebaseConfig = {
   apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
   authDomain: "wakubwa-tu2.firebaseapp.com",
@@ -201,6 +204,11 @@ const FUNCTION_URL =
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const loginSection = document.getElementById("loginSection");
 const dashboard = document.getElementById("dashboard");
@@ -251,7 +259,6 @@ async function getUploadToken(file) {
   }
 
   const idToken = await user.getIdToken();
-
   const contentType = file.type || "video/mp4";
 
   const response = await fetch(FUNCTION_URL, {
@@ -278,33 +285,36 @@ async function getUploadToken(file) {
   return result;
 }
 
-/* UPLOAD YA KAWAIDA KWA HTTP PUT - BILA TUS */
+/* UPLOAD KUPITIA SUPABASE SDK */
 
-async function uploadVideoDirectly(file, uploadInfo) {
-  if (!uploadInfo.signedUrl) {
-    throw new Error("Supabase haijatoa signed upload URL.");
+async function uploadVideo(file, uploadInfo) {
+  if (!uploadInfo.path || !uploadInfo.token) {
+    throw new Error("Supabase haijatoa ruhusa kamili ya upload.");
   }
 
   const contentType = file.type || "video/mp4";
 
-  const response = await fetch(uploadInfo.signedUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": contentType
-    },
-    body: file
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-
-    throw new Error(
-      "Supabase HTTP " + response.status + ": " +
-      (errorText || "Upload imeshindikana.")
+  const { data, error } = await supabase.storage
+    .from(BUCKET)
+    .uploadToSignedUrl(
+      uploadInfo.path,
+      uploadInfo.token,
+      file,
+      {
+        contentType: contentType,
+        cacheControl: "3600"
+      }
     );
+
+  if (error) {
+    throw new Error("Supabase: " + error.message);
   }
 
-  return true;
+  if (!data) {
+    throw new Error("Supabase haijathibitisha upload.");
+  }
+
+  return data.path;
 }
 
 document.getElementById("addVideoBtn").onclick = async () => {
@@ -337,13 +347,10 @@ document.getElementById("addVideoBtn").onclick = async () => {
     return;
   }
 
-  if (!file.type.startsWith("video/")) {
-    showStatus("Tafadhali chagua faili la video.");
-    return;
-  }
+  const contentType = file.type || "video/mp4";
 
-  if (!(file instanceof Blob)) {
-    showStatus("Browser haijatambua video. Chagua tena.");
+  if (!contentType.startsWith("video/")) {
+    showStatus("Tafadhali chagua faili la video.");
     return;
   }
 
@@ -355,14 +362,9 @@ document.getElementById("addVideoBtn").onclick = async () => {
 
     const uploadInfo = await getUploadToken(file);
 
-    if (!uploadInfo.path || !uploadInfo.token ||
-        !uploadInfo.signedUrl) {
-      throw new Error("Ruhusa ya kupakia video haijakamilika.");
-    }
+    showStatus("Hatua 2/3: Supabase inapokea video...");
 
-    showStatus("Hatua 2/3: Tunapakia video kwa HTTP PUT...");
-
-    await uploadVideoDirectly(file, uploadInfo);
+    const videoPath = await uploadVideo(file, uploadInfo);
 
     showStatus("Hatua 3/3: Tunahifadhi taarifa za video...");
 
@@ -372,21 +374,21 @@ document.getElementById("addVideoBtn").onclick = async () => {
     const batch = writeBatch(db);
 
     batch.set(videoRef, {
-      title,
-      description,
-      price,
-      thumbnailUrl,
+      title: title,
+      description: description,
+      price: price,
+      thumbnailUrl: thumbnailUrl,
       createdAt: serverTimestamp()
     });
 
     batch.set(adminRef, {
-      title,
-      description,
-      price,
-      thumbnailUrl,
-      videoPath: uploadInfo.path,
+      title: title,
+      description: description,
+      price: price,
+      thumbnailUrl: thumbnailUrl,
+      videoPath: videoPath,
       videoFileName: file.name,
-      contentType: file.type || "video/mp4",
+      contentType: contentType,
       createdAt: serverTimestamp()
     });
 
