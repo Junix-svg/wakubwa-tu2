@@ -7,203 +7,39 @@
 <title>WAKUBWA TU2</title>
 
 <style>
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: #101010;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-header {
-  background: #181818;
-  padding: 18px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #c9a227;
-}
-
-.logo {
-  color: #e2bd45;
-  font-size: 21px;
-  font-weight: bold;
-}
-
-button {
-  background: #d6ad35;
-  color: #111;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.hero {
-  text-align: center;
-  padding: 65px 20px;
-  background: linear-gradient(135deg,#292929,#111);
-}
-
-.hero h1 {
-  font-size: 34px;
-  color: #e2bd45;
-}
-
-.hero p {
-  color: #ccc;
-  line-height: 1.6;
-}
-
-.section {
-  padding: 25px 20px;
-}
-
-.section h2 {
-  color: #e2bd45;
-}
-
-.search-box {
-  width: 100%;
-  max-width: 500px;
-  display: block;
-  margin: 18px auto 25px;
-  padding: 14px;
-  border-radius: 7px;
-  border: 1px solid #555;
-  background: #202020;
-  color: white;
-  font-size: 16px;
-}
-
-.videos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-  gap: 18px;
-}
-
-.video {
-  background: #202020;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid #383838;
-}
-
-.thumbnail {
-  width: 100%;
-  height: 170px;
-  background: linear-gradient(135deg,#383838,#171717);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  color: #d6ad35;
-  font-size: 45px;
-}
-
-.thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.video-info {
-  padding: 15px;
-}
-
-.video-info h3 {
-  color: white;
-  margin-top: 0;
-}
-
-.description {
-  color: #bbb;
-  line-height: 1.5;
-}
-
-.price {
-  color: #e2bd45;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.buy-button {
-  width: 100%;
-}
-
-.empty {
-  color: #aaa;
-  text-align: center;
-  padding: 35px 10px;
-  grid-column: 1 / -1;
-}
-
-#status {
-  color: #d6ad35;
-  text-align: center;
-  padding: 10px;
-}
-
-footer {
-  text-align: center;
-  padding: 25px;
-  color: #999;
-  background: #181818;
-  margin-top: 35px;
-}
-
-/* AGE CONFIRMATION */
-#ageGate {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.96);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.age-box {
-  background: #202020;
-  border: 1px solid #c9a227;
-  border-radius: 12px;
-  padding: 30px 22px;
-  max-width: 420px;
-  width: 100%;
-  text-align: center;
-}
-
-.age-box h2 {
-  color: #e2bd45;
-}
-
-.age-box p {
-  color: #ccc;
-  line-height: 1.6;
-}
-
-.age-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.age-actions button {
-  flex: 1;
-}
-
-#noAge {
-  background: #444;
-  color: white;
-}
-
-@media(max-width:480px) {
-  .hero h1 { font-size: 27px; }
-  .logo { font-size: 18px; }
+*{box-sizing:border-box}
+body{margin:0;background:#101010;color:white;font-family:Arial,sans-serif}
+header{background:#181818;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #c9a227}
+.logo{color:#e2bd45;font-size:21px;font-weight:bold}
+button{background:#d6ad35;color:#111;border:0;padding:12px 16px;border-radius:6px;font-weight:bold;cursor:pointer}
+.hero{text-align:center;padding:65px 20px;background:linear-gradient(135deg,#292929,#111)}
+.hero h1{font-size:34px;color:#e2bd45}
+.hero p{color:#ccc;line-height:1.6}
+.section{padding:25px 20px}
+.section h2{color:#e2bd45}
+.search-box{width:100%;max-width:500px;display:block;margin:18px auto 25px;padding:14px;border-radius:7px;border:1px solid #555;background:#202020;color:white;font-size:16px}
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.video{background:#202020;border-radius:10px;overflow:hidden;border:1px solid #383838}
+.thumbnail{width:100%;height:170px;background:linear-gradient(135deg,#383838,#171717);display:grid;place-items:center;overflow:hidden;color:#d6ad35;font-size:45px}
+.thumbnail img{width:100%;height:100%;object-fit:cover;display:block}
+.video-info{padding:15px}
+.video-info h3{color:white;margin-top:0}
+.description{color:#bbb;line-height:1.5}
+.price{color:#e2bd45;font-weight:bold;font-size:18px}
+.buy-button{width:100%}
+.empty{color:#aaa;text-align:center;padding:35px 10px;grid-column:1/-1}
+#status{color:#d6ad35;text-align:center;padding:10px}
+footer{text-align:center;padding:25px;color:#999;background:#181818;margin-top:35px}
+#ageGate{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.age-box{background:#202020;border:1px solid #c9a227;border-radius:12px;padding:30px 22px;max-width:420px;width:100%;text-align:center}
+.age-box h2{color:#e2bd45}
+.age-box p{color:#ccc;line-height:1.6}
+.age-actions{display:flex;gap:10px;justify-content:center;margin-top:20px}
+.age-actions button{flex:1}
+#noAge{background:#444;color:white}
+@media(max-width:480px){
+ .hero h1{font-size:27px}
+ .logo{font-size:18px}
 }
 </style>
 </head>
@@ -211,248 +47,246 @@ footer {
 <body>
 
 <div id="ageGate">
-  <div class="age-box">
-    <h2>18+ Only</h2>
-    <p>
-      Tovuti hii imekusudiwa kwa watu wazima.
-      Tafadhali thibitisha kuwa una miaka 18 au zaidi.
-    </p>
-    <div class="age-actions">
-      <button id="yesAge">Ndiyo, nina miaka 18+</button>
-      <button id="noAge">Hapana</button>
-    </div>
+ <div class="age-box">
+  <h2>18+ Only</h2>
+  <p>Tovuti hii imekusudiwa kwa watu wazima. Tafadhali thibitisha kuwa una miaka 18 au zaidi.</p>
+  <div class="age-actions">
+   <button id="yesAge">Ndiyo, nina miaka 18+</button>
+   <button id="noAge">Hapana</button>
   </div>
+ </div>
 </div>
 
 <header>
-  <div class="logo">WAKUBWA TU2</div>
-  <button id="langBtn">English</button>
+ <div class="logo">WAKUBWA TU2</div>
+ <button id="langBtn">English</button>
 </header>
 
 <section class="hero">
-  <h1 id="welcome">Karibu WAKUBWA TU2</h1>
-  <p id="intro">Jukwaa lako la kutazama video.</p>
-  <button id="exploreBtn">Tazama Video</button>
+ <h1 id="welcome">Karibu WAKUBWA TU2</h1>
+ <p id="intro">Jukwaa lako la kutazama video.</p>
+ <button id="exploreBtn">Tazama Video</button>
 </section>
 
 <section class="section">
-  <h2 id="heading">Video Zetu</h2>
-
-  <input
-    type="search"
-    id="searchInput"
-    class="search-box"
-    placeholder="Tafuta video..."
-  >
-
-  <p id="status">Inatafuta video...</p>
-  <div class="videos" id="videos"></div>
+ <h2 id="heading">Video Zetu</h2>
+ <input type="search" id="searchInput" class="search-box" placeholder="Tafuta video...">
+ <p id="status">Inatafuta video...</p>
+ <div class="videos" id="videos"></div>
 </section>
 
-<footer>
-  © 2026 WAKUBWA TU2. All Rights Reserved.
-</footer>
+<footer>© 2026 WAKUBWA TU2. All Rights Reserved.</footer>
 
 <script type="module">
 
-import { initializeApp }
+import {initializeApp}
 from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 
 import {
-  getFirestore,
-  collection,
-  onSnapshot
+ getFirestore,
+ collection,
+ onSnapshot
 }
 from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
-  authDomain: "wakubwa-tu2.firebaseapp.com",
-  projectId: "wakubwa-tu2",
-  storageBucket: "wakubwa-tu2.firebasestorage.app",
-  messagingSenderId: "399469319991",
-  appId: "1:399469319991:web:dc665855a312c69dacacb2"
+const firebaseConfig={
+ apiKey:"AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
+ authDomain:"wakubwa-tu2.firebaseapp.com",
+ projectId:"wakubwa-tu2",
+ storageBucket:"wakubwa-tu2.firebasestorage.app",
+ messagingSenderId:"399469319991",
+ appId:"1:399469319991:web:dc665855a312c69dacacb2"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-const videosContainer = document.getElementById("videos");
-const status = document.getElementById("status");
-const searchInput = document.getElementById("searchInput");
+const videosContainer=document.getElementById("videos");
+const status=document.getElementById("status");
+const searchInput=document.getElementById("searchInput");
 
-let english = false;
-let currentVideos = [];
+let english=false;
+let currentVideos=[];
 
-// AGE CONFIRMATION
-const ageGate = document.getElementById("ageGate");
+/* AGE CONFIRMATION */
+const ageGate=document.getElementById("ageGate");
 
-if (localStorage.getItem("wakubwaAgeConfirmed") === "yes") {
-  ageGate.style.display = "none";
+if(localStorage.getItem("wakubwaAgeConfirmed")==="yes"){
+ ageGate.style.display="none";
 }
 
-document.getElementById("yesAge").onclick = () => {
-  localStorage.setItem("wakubwaAgeConfirmed", "yes");
-  ageGate.style.display = "none";
+document.getElementById("yesAge").onclick=()=>{
+ localStorage.setItem("wakubwaAgeConfirmed","yes");
+ ageGate.style.display="none";
 };
 
-document.getElementById("noAge").onclick = () => {
-  ageGate.querySelector(".age-box").innerHTML =
-    "<h2>Access Restricted</h2><p>Huwezi kuendelea kwenye tovuti hii.</p>";
+document.getElementById("noAge").onclick=()=>{
+ ageGate.querySelector(".age-box").innerHTML=
+ "<h2>Access Restricted</h2><p>Huwezi kuendelea kwenye tovuti hii.</p>";
 };
 
-// LANGUAGE SWITCH
-document.getElementById("langBtn").onclick = () => {
-  english = !english;
+/* LANGUAGE */
+document.getElementById("langBtn").onclick=()=>{
+ english=!english;
 
-  document.getElementById("langBtn").textContent =
-    english ? "Kiswahili" : "English";
+ document.getElementById("langBtn").textContent=
+  english?"Kiswahili":"English";
 
-  document.getElementById("welcome").textContent =
-    english ? "Welcome to WAKUBWA TU2" : "Karibu WAKUBWA TU2";
+ document.getElementById("welcome").textContent=
+  english?"Welcome to WAKUBWA TU2":"Karibu WAKUBWA TU2";
 
-  document.getElementById("intro").textContent =
-    english ? "Your video platform." : "Jukwaa lako la kutazama video.";
+ document.getElementById("intro").textContent=
+  english?"Your video platform.":"Jukwaa lako la kutazama video.";
 
-  document.getElementById("heading").textContent =
-    english ? "Our Videos" : "Video Zetu";
+ document.getElementById("heading").textContent=
+  english?"Our Videos":"Video Zetu";
 
-  document.getElementById("exploreBtn").textContent =
-    english ? "Explore Videos" : "Tazama Video";
+ document.getElementById("exploreBtn").textContent=
+  english?"Explore Videos":"Tazama Video";
 
-  searchInput.placeholder =
-    english ? "Search videos..." : "Tafuta video...";
+ searchInput.placeholder=
+  english?"Search videos...":"Tafuta video...";
 
-  renderVideos(currentVideos);
+ renderVideos(currentVideos);
 };
 
-document.getElementById("exploreBtn").onclick = () => {
-  document.getElementById("videos").scrollIntoView({
-    behavior: "smooth"
-  });
+/* EXPLORE */
+document.getElementById("exploreBtn").onclick=()=>{
+ document.getElementById("videos").scrollIntoView({behavior:"smooth"});
 };
 
-// SEARCH
-searchInput.addEventListener("input", () => {
-  renderVideos(currentVideos);
+/* SEARCH */
+searchInput.addEventListener("input",()=>{
+ renderVideos(currentVideos);
 });
 
-// DISPLAY VIDEOS
-function renderVideos(data) {
-  videosContainer.innerHTML = "";
-
-  const searchTerm = searchInput.value.trim().toLowerCase();
-
-  const filteredVideos = data.filter(video => {
-    const title = (video.title || "").toLowerCase();
-    const description = (video.description || "").toLowerCase();
-
-    return title.includes(searchTerm) ||
-           description.includes(searchTerm);
-  });
-
-  if (filteredVideos.length === 0) {
-    const empty = document.createElement("p");
-    empty.className = "empty";
-
-    empty.textContent = searchTerm
-      ? (english ? "No matching videos found." : "Hakuna video inayolingana na utafutaji wako.")
-      : (english ? "No videos available yet." : "Hakuna video zilizowekwa bado.");
-
-    videosContainer.appendChild(empty);
-    return;
-  }
-
-  filteredVideos.forEach(video => {
-    const card = document.createElement("div");
-    card.className = "video";
-
-    // VIDEO THUMBNAIL
-    const thumbnail = document.createElement("div");
-    thumbnail.className = "thumbnail";
-
-    if (video.thumbnailUrl &&
-        /^https:\/\//i.test(video.thumbnailUrl)) {
-
-      const image = document.createElement("img");
-      image.src = video.thumbnailUrl;
-      image.alt = video.title || "Video thumbnail";
-      image.loading = "lazy";
-
-      image.onerror = () => {
-        thumbnail.innerHTML = "";
-        thumbnail.textContent = "▶";
-      };
-
-      thumbnail.appendChild(image);
-
-    } else {
-      thumbnail.textContent = "▶";
-    }
-
-    const info = document.createElement("div");
-    info.className = "video-info";
-
-    const title = document.createElement("h3");
-    title.textContent = video.title || "Untitled";
-
-    const description = document.createElement("p");
-    description.className = "description";
-    description.textContent = video.description || "";
-
-    const price = document.createElement("p");
-    price.className = "price";
-    price.textContent =
-      "TSh " + Number(video.price || 0).toLocaleString("en-US");
-
-    const button = document.createElement("button");
-    button.className = "buy-button";
-    button.textContent = english ? "Buy Video" : "Nunua Video";
-
-    button.onclick = () => {
-      alert(
-        english
-          ? "Payment system is not connected yet."
-          : "Mfumo wa malipo bado haujaunganishwa."
-      );
-    };
-
-    info.appendChild(title);
-    info.appendChild(description);
-    info.appendChild(price);
-    info.appendChild(button);
-
-    card.appendChild(thumbnail);
-    card.appendChild(info);
-
-    videosContainer.appendChild(card);
-  });
+/* PATA PICHA */
+function getThumbnail(video){
+ return video.thumbnailDataUrl ||
+        video.thumbnailUrl ||
+        video.imageUrl ||
+        "";
 }
 
-// FIREBASE LIVE CONNECTION
-onSnapshot(
-  collection(db, "publicVideos"),
+/* ONYESHA VIDEO */
+function renderVideos(data){
 
-  (snapshot) => {
-    currentVideos = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+ videosContainer.innerHTML="";
 
-    status.textContent = "";
-    renderVideos(currentVideos);
-  },
+ const searchTerm=searchInput.value.trim().toLowerCase();
 
-  (error) => {
-    console.error(error);
+ const filteredVideos=data.filter(video=>{
+  const title=(video.title||"").toLowerCase();
+  const description=(video.description||"").toLowerCase();
 
-    status.textContent = english
-      ? "Unable to load videos. Please try again."
-      : "Imeshindikana kupakia video. Jaribu tena.";
+  return title.includes(searchTerm)||
+         description.includes(searchTerm);
+ });
+
+ if(filteredVideos.length===0){
+  const empty=document.createElement("p");
+  empty.className="empty";
+
+  empty.textContent=searchTerm
+   ?(english?"No matching videos found.":"Hakuna video inayolingana na utafutaji wako.")
+   :(english?"No videos available yet.":"Hakuna video zilizowekwa bado.");
+
+  videosContainer.appendChild(empty);
+  return;
+ }
+
+ filteredVideos.forEach(video=>{
+
+  const card=document.createElement("div");
+  card.className="video";
+
+  /* THUMBNAIL */
+  const thumbnail=document.createElement("div");
+  thumbnail.className="thumbnail";
+
+  const imageSource=getThumbnail(video);
+
+  if(imageSource){
+
+   const image=document.createElement("img");
+   image.src=imageSource;
+   image.alt=video.title||"Picha ya video";
+   image.loading="lazy";
+
+   image.onerror=()=>{
+    thumbnail.innerHTML="";
+    thumbnail.textContent="▶";
+   };
+
+   thumbnail.appendChild(image);
+
+  }else{
+   thumbnail.textContent="▶";
   }
+
+  /* TAARIFA ZA VIDEO */
+  const info=document.createElement("div");
+  info.className="video-info";
+
+  const title=document.createElement("h3");
+  title.textContent=video.title||"Untitled";
+
+  const description=document.createElement("p");
+  description.className="description";
+  description.textContent=video.description||"";
+
+  const price=document.createElement("p");
+  price.className="price";
+  price.textContent=
+   "TSh "+Number(video.price||0).toLocaleString("en-US");
+
+  const button=document.createElement("button");
+  button.className="buy-button";
+  button.textContent=english?"Buy Video":"Nunua Video";
+
+  button.onclick=()=>{
+   alert(
+    english
+    ?"Payment system is not connected yet."
+    :"Mfumo wa malipo bado haujaunganishwa."
+   );
+  };
+
+  info.appendChild(title);
+  info.appendChild(description);
+  info.appendChild(price);
+  info.appendChild(button);
+
+  card.appendChild(thumbnail);
+  card.appendChild(info);
+
+  videosContainer.appendChild(card);
+ });
+}
+
+/* FIREBASE LIVE CONNECTION */
+onSnapshot(
+ collection(db,"publicVideos"),
+
+ snapshot=>{
+  currentVideos=snapshot.docs.map(doc=>({
+   id:doc.id,
+   ...doc.data()
+  }));
+
+  status.textContent="";
+  renderVideos(currentVideos);
+ },
+
+ error=>{
+  console.error(error);
+
+  status.textContent=english
+   ?"Unable to load videos. Please try again."
+   :"Imeshindikana kupakia video. Jaribu tena.";
+ }
 );
 
 </script>
-
 </body>
 </html>
