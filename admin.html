@@ -5,461 +5,358 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WAKUBWA TU2 - Admin</title>
-
 <style>
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  padding: 20px 12px;
-  background: #101010;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-.container { max-width: 650px; margin: auto; }
-
-header {
-  text-align: center;
-  color: #d6ad55;
-  margin-bottom: 25px;
-}
-
-h1 { font-size: 25px; }
-
-.card {
-  background: #1d1d1d;
-  border: 1px solid #444;
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 18px;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 13px;
-  margin: 8px 0 14px;
-  border: 1px solid #555;
-  border-radius: 7px;
-  background: #111;
-  color: white;
-  font-size: 15px;
-}
-
-label {
-  color: #d6ad55;
-  font-weight: bold;
-}
-
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 10px;
-  border: 0;
-  border-radius: 7px;
-  background: #d6ad55;
-  color: #111;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-button:disabled { opacity: .5; }
-
-.secondary {
-  background: #444;
-  color: white;
-}
-
-.video-item {
-  padding: 13px;
-  border-bottom: 1px solid #444;
-  overflow-wrap: anywhere;
-}
-
-#dashboard { display: none; }
-
-#status {
-  color: #d6ad55;
-  margin-top: 15px;
-  white-space: pre-wrap;
-}
-
-.small {
-  color: #aaa;
-  font-size: 13px;
-}
+*{box-sizing:border-box}
+body{margin:0;padding:20px 12px;background:#101010;color:white;font-family:Arial,sans-serif}
+.container{max-width:650px;margin:auto}
+header{text-align:center;color:#d6ad55;margin-bottom:25px}
+.card{background:#1d1d1d;border:1px solid #444;border-radius:12px;padding:18px;margin-bottom:18px}
+input,textarea{width:100%;padding:13px;margin:8px 0 14px;border:1px solid #555;border-radius:7px;background:#111;color:white;font-size:15px}
+label{color:#d6ad55;font-weight:bold}
+button{width:100%;padding:14px;margin-top:10px;border:0;border-radius:7px;background:#d6ad55;color:#111;font-weight:bold;font-size:16px}
+button:disabled{opacity:.5}
+.secondary{background:#444;color:white}
+#dashboard{display:none}
+#status{color:#d6ad55;margin-top:15px;white-space:pre-wrap}
+.small{color:#aaa;font-size:13px}
+#imagePreview{display:none;width:100%;max-height:230px;object-fit:contain;border-radius:8px;margin:8px 0;background:#111}
+.video-item{padding:13px;border-bottom:1px solid #444;overflow-wrap:anywhere}
+.video-item img{width:100%;max-height:180px;object-fit:cover;border-radius:8px}
 </style>
 </head>
-
 <body>
 <div class="container">
 
 <header>
-  <h1>WAKUBWA TU2</h1>
-  <p>ADMIN DASHBOARD</p>
+<h1>WAKUBWA TU2</h1>
+<p>ADMIN DASHBOARD</p>
 </header>
 
 <section class="card" id="loginSection">
-  <h2>Admin Login</h2>
-
-  <label>Email</label>
-  <input id="email" type="email" placeholder="Admin email">
-
-  <label>Password</label>
-  <input id="password" type="password" placeholder="Password">
-
-  <button id="loginBtn">LOGIN</button>
-  <p id="loginStatus"></p>
+<h2>Admin Login</h2>
+<label>Email</label>
+<input id="email" type="email" placeholder="Admin email">
+<label>Password</label>
+<input id="password" type="password" placeholder="Password">
+<button id="loginBtn">LOGIN</button>
+<p id="loginStatus"></p>
 </section>
 
 <section id="dashboard">
+<div class="card">
+<h2>Ongeza Video</h2>
 
-  <div class="card">
-    <h2>Ongeza Video</h2>
+<label>Jina la Video</label>
+<input id="videoTitle" type="text" placeholder="Andika jina la video">
 
-    <label>Jina la Video</label>
-    <input id="videoTitle" type="text"
-      placeholder="Andika jina la video">
+<label>Maelezo</label>
+<textarea id="videoDescription" placeholder="Maelezo ya video"></textarea>
 
-    <label>Maelezo</label>
-    <textarea id="videoDescription"
-      placeholder="Maelezo ya video"></textarea>
+<label>Bei ya Video (TZS)</label>
+<input id="videoPrice" type="number" min="0" step="1" placeholder="Mfano 2000">
 
-    <label>Bei ya Video (TZS)</label>
-    <input id="videoPrice" type="number"
-      min="0" step="1" placeholder="Mfano 2000">
+<label>Chagua Picha ya Video kutoka Gallery</label>
+<input id="thumbnailFile" type="file" accept="image/*">
+<img id="imagePreview" alt="Picha ya video utakayochagua">
+<p class="small">Chagua picha inayoitambulisha video. Picha itapunguzwa ukubwa kiotomatiki.</p>
 
-    <label>Thumbnail URL (hiari)</label>
-    <input id="thumbnailUrl" type="url"
-      placeholder="https://...">
+<label>Chagua Video kutoka Gallery</label>
+<input id="videoFile" type="file" accept="video/*">
 
-    <label>Chagua Video kutoka Gallery</label>
-    <input id="videoFile" type="file" accept="video/*">
+<button id="addVideoBtn">PAKIA VIDEO</button>
+<p id="status"></p>
+</div>
 
-    <p class="small">
-      Chagua video kutoka kwenye Gallery ya simu.
-      Video itahifadhiwa kwenye private storage.
-    </p>
+<div class="card">
+<h2>Video Zilizowekwa</h2>
+<div id="videoList">Inapakia...</div>
+</div>
 
-    <button id="addVideoBtn">PAKIA VIDEO</button>
-    <p id="status"></p>
-  </div>
-
-  <div class="card">
-    <h2>Video Zilizowekwa</h2>
-    <div id="videoList">Inapakia...</div>
-  </div>
-
-  <button id="logoutBtn" class="secondary">LOGOUT</button>
+<button id="logoutBtn" class="secondary">LOGOUT</button>
 </section>
-
 </div>
 
 <script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
+ getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
 import {
-  getFirestore,
-  collection,
-  doc,
-  writeBatch,
-  getDocs,
-  serverTimestamp
+ getFirestore,collection,doc,writeBatch,getDocs,serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
 
-import { createClient }
-from "https://esm.sh/@supabase/supabase-js@2";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
-  authDomain: "wakubwa-tu2.firebaseapp.com",
-  projectId: "wakubwa-tu2",
-  storageBucket: "wakubwa-tu2.firebasestorage.app",
-  messagingSenderId: "399469319991",
-  appId: "1:399469319991:web:dc665855a312c69dacacb2"
+const firebaseConfig={
+ apiKey:"AIzaSyABabgh9pONkM6tr50mQUpXRnnxBF8Wf3c",
+ authDomain:"wakubwa-tu2.firebaseapp.com",
+ projectId:"wakubwa-tu2",
+ storageBucket:"wakubwa-tu2.firebasestorage.app",
+ messagingSenderId:"399469319991",
+ appId:"1:399469319991:web:dc665855a312c69dacacb2"
 };
 
-const ADMIN_UID = "5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
+const ADMIN_UID="5qFt5nEK7UeEN3Ff1TGl0gms2ll2";
+const SUPABASE_URL="https://usaifuvsmgjtkyzvrphf.supabase.co";
+const SUPABASE_KEY="sb_publishable_ZRo_VHCQCv6Ghv7_PxkJaA_oaQGXL0S";
+const BUCKET="wakubwa-tu2-videos";
+const FUNCTION_URL=SUPABASE_URL+"/functions/v1/admin-video-upload";
 
-const SUPABASE_URL =
-  "https://usaifuvsmgjtkyzvrphf.supabase.co";
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const SUPABASE_KEY =
-  "sb_publishable_ZRo_VHCQCv6Ghv7_PxkJaA_oaQGXL0S";
+const $=id=>document.getElementById(id);
+const showStatus=message=>$("status").textContent=message;
 
-const BUCKET = "wakubwa-tu2-videos";
-
-const FUNCTION_URL =
-  SUPABASE_URL + "/functions/v1/admin-video-upload";
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-const loginSection = document.getElementById("loginSection");
-const dashboard = document.getElementById("dashboard");
-const statusBox = document.getElementById("status");
-
-function showStatus(message) {
-  statusBox.textContent = message;
-}
-
-document.getElementById("loginBtn").onclick = async () => {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const loginStatus = document.getElementById("loginStatus");
-
-  loginStatus.textContent = "Inaingia...";
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    loginStatus.textContent = "";
-  } catch (error) {
-    loginStatus.textContent =
-      "Login imeshindikana: " + error.message;
-  }
+$("loginBtn").onclick=async()=>{
+ const email=$("email").value.trim();
+ const password=$("password").value;
+ $("loginStatus").textContent="Inaingia...";
+ try{
+  await signInWithEmailAndPassword(auth,email,password);
+  $("loginStatus").textContent="";
+ }catch(error){
+  $("loginStatus").textContent="Login imeshindikana: "+error.message;
+ }
 };
 
-onAuthStateChanged(auth, async (user) => {
-  if (user && user.uid === ADMIN_UID) {
-    loginSection.style.display = "none";
-    dashboard.style.display = "block";
-    await loadVideos();
-  } else {
-    dashboard.style.display = "none";
-    loginSection.style.display = "block";
-
-    if (user) {
-      await signOut(auth);
-      document.getElementById("loginStatus").textContent =
-        "Akaunti hii haina ruhusa ya Admin.";
-    }
+onAuthStateChanged(auth,async user=>{
+ if(user&&user.uid===ADMIN_UID){
+  $("loginSection").style.display="none";
+  $("dashboard").style.display="block";
+  await loadVideos();
+ }else{
+  $("dashboard").style.display="none";
+  $("loginSection").style.display="block";
+  if(user){
+   await signOut(auth);
+   $("loginStatus").textContent="Akaunti hii haina ruhusa ya Admin.";
   }
+ }
 });
 
-async function getUploadToken(file) {
-  const user = auth.currentUser;
+/* PUNGUZA UKUBWA WA PICHA */
+async function prepareThumbnail(file){
+ if(!file || !file.type.startsWith("image/")){
+  throw new Error("Chagua picha sahihi kutoka Gallery.");
+ }
 
-  if (!user || user.uid !== ADMIN_UID) {
-    throw new Error("Admin hajathibitishwa.");
-  }
+ const imageUrl=URL.createObjectURL(file);
 
-  const idToken = await user.getIdToken();
-  const contentType = file.type || "video/mp4";
-
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + idToken,
-      "apikey": SUPABASE_KEY
-    },
-    body: JSON.stringify({
-      fileName: file.name,
-      contentType: contentType
-    })
+ try{
+  const image=new Image();
+  image.src=imageUrl;
+  await new Promise((resolve,reject)=>{
+   image.onload=resolve;
+   image.onerror=()=>reject(new Error("Picha imeshindwa kusomeka."));
   });
 
-  const result = await response.json();
+  const maxWidth=480;
+  const maxHeight=360;
+  const ratio=Math.min(1,maxWidth/image.width,maxHeight/image.height);
 
-  if (!response.ok || !result.success) {
-    throw new Error(
-      result.error || "Imeshindikana kupata ruhusa ya upload."
-    );
-  }
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.round(image.width*ratio);
+  canvas.height=Math.round(image.height*ratio);
 
-  return result;
+  const context=canvas.getContext("2d");
+  context.drawImage(image,0,0,canvas.width,canvas.height);
+
+  return canvas.toDataURL("image/jpeg",0.65);
+ }finally{
+  URL.revokeObjectURL(imageUrl);
+ }
 }
 
-/* UPLOAD KUPITIA SUPABASE SDK */
+/* ONESHA PREVIEW YA PICHA */
+$("thumbnailFile").addEventListener("change",async()=>{
+ const file=$("thumbnailFile").files[0];
+ const preview=$("imagePreview");
 
-async function uploadVideo(file, uploadInfo) {
-  if (!uploadInfo.path || !uploadInfo.token) {
-    throw new Error("Supabase haijatoa ruhusa kamili ya upload.");
-  }
+ if(!file){
+  preview.style.display="none";
+  return;
+ }
 
-  const contentType = file.type || "video/mp4";
+ try{
+  preview.src=await prepareThumbnail(file);
+  preview.style.display="block";
+ }catch(error){
+  showStatus(error.message);
+  preview.style.display="none";
+ }
+});
 
-  const { data, error } = await supabase.storage
-    .from(BUCKET)
-    .uploadToSignedUrl(
-      uploadInfo.path,
-      uploadInfo.token,
-      file,
-      {
-        contentType: contentType,
-        cacheControl: "3600"
-      }
-    );
+/* PATA RUHUSA YA SUPABASE */
+async function getUploadToken(file){
+ const user=auth.currentUser;
+ if(!user||user.uid!==ADMIN_UID)throw new Error("Admin hajathibitishwa.");
 
-  if (error) {
-    throw new Error("Supabase: " + error.message);
-  }
+ const idToken=await user.getIdToken();
 
-  if (!data) {
-    throw new Error("Supabase haijathibitisha upload.");
-  }
+ const response=await fetch(FUNCTION_URL,{
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json",
+   "Authorization":"Bearer "+idToken,
+   "apikey":SUPABASE_KEY
+  },
+  body:JSON.stringify({
+   fileName:file.name,
+   contentType:file.type||"video/mp4"
+  })
+ });
 
-  return data.path;
+ const result=await response.json();
+
+ if(!response.ok||!result.success){
+  throw new Error(result.error||"Imeshindikana kupata ruhusa ya upload.");
+ }
+ return result;
 }
 
-document.getElementById("addVideoBtn").onclick = async () => {
+/* PAKIA VIDEO */
+async function uploadVideo(file,uploadInfo){
+ if(!uploadInfo.path||!uploadInfo.token){
+  throw new Error("Supabase haijatoa ruhusa kamili ya upload.");
+ }
 
-  const title =
-    document.getElementById("videoTitle").value.trim();
+ const {data,error}=await supabase.storage
+  .from(BUCKET)
+  .uploadToSignedUrl(
+   uploadInfo.path,
+   uploadInfo.token,
+   file,
+   {contentType:file.type||"video/mp4"}
+  );
 
-  const description =
-    document.getElementById("videoDescription").value.trim();
+ if(error)throw new Error("Supabase: "+error.message);
+ if(!data)throw new Error("Supabase haijathibitisha upload.");
 
-  const priceInput =
-    document.getElementById("videoPrice").value;
+ return data.path;
+}
 
-  const price = Number(priceInput);
+/* ONGEZA VIDEO NA PICHA YAKE */
+$("addVideoBtn").onclick=async()=>{
+ const title=$("videoTitle").value.trim();
+ const description=$("videoDescription").value.trim();
+ const priceInput=$("videoPrice").value;
+ const price=Number(priceInput);
+ const imageFile=$("thumbnailFile").files[0];
+ const videoFile=$("videoFile").files[0];
 
-  const thumbnailUrl =
-    document.getElementById("thumbnailUrl").value.trim();
+ if(!title||!imageFile||!videoFile||priceInput===""||
+    !Number.isFinite(price)||price<0){
+  showStatus("Jaza jina, bei sahihi, chagua picha na video.");
+  return;
+ }
 
-  const file =
-    document.getElementById("videoFile").files[0];
+ if(!videoFile.type.startsWith("video/")){
+  showStatus("Faili ulilochagua si video.");
+  return;
+ }
 
-  if (
-    !title ||
-    !file ||
-    priceInput === "" ||
-    !Number.isFinite(price) ||
-    price < 0
-  ) {
-    showStatus("Jaza jina, bei sahihi na chagua video.");
-    return;
-  }
+ const button=$("addVideoBtn");
+ button.disabled=true;
 
-  const contentType = file.type || "video/mp4";
+ try{
+  showStatus("Hatua 1/4: Tunatengeneza picha ndogo...");
+  const thumbnailDataUrl=await prepareThumbnail(imageFile);
 
-  if (!contentType.startsWith("video/")) {
-    showStatus("Tafadhali chagua faili la video.");
-    return;
-  }
+  showStatus("Hatua 2/4: Tunapata ruhusa ya kupakia video...");
+  const uploadInfo=await getUploadToken(videoFile);
 
-  const button = document.getElementById("addVideoBtn");
-  button.disabled = true;
+  showStatus("Hatua 3/4: Tunapakia video...");
+  const videoPath=await uploadVideo(videoFile,uploadInfo);
 
-  try {
-    showStatus("Hatua 1/3: Tunapata ruhusa ya upload...");
+  showStatus("Hatua 4/4: Tunahifadhi video na picha...");
+  const videoRef=doc(collection(db,"publicVideos"));
+  const adminRef=doc(db,"adminData",videoRef.id);
 
-    const uploadInfo = await getUploadToken(file);
+  const batch=writeBatch(db);
 
-    showStatus("Hatua 2/3: Supabase inapokea video...");
+  batch.set(videoRef,{
+   title,
+   description,
+   price,
+   thumbnailDataUrl,
+   createdAt:serverTimestamp()
+  });
 
-    const videoPath = await uploadVideo(file, uploadInfo);
+  batch.set(adminRef,{
+   title,
+   description,
+   price,
+   thumbnailDataUrl,
+   videoPath,
+   videoFileName:videoFile.name,
+   contentType:videoFile.type||"video/mp4",
+   createdAt:serverTimestamp()
+  });
 
-    showStatus("Hatua 3/3: Tunahifadhi taarifa za video...");
+  await batch.commit();
 
-    const videoRef = doc(collection(db, "publicVideos"));
-    const adminRef = doc(db, "adminData", videoRef.id);
+  showStatus("Hongera! Video na picha yake vimehifadhiwa.");
 
-    const batch = writeBatch(db);
+  $("videoTitle").value="";
+  $("videoDescription").value="";
+  $("videoPrice").value="";
+  $("thumbnailFile").value="";
+  $("videoFile").value="";
+  $("imagePreview").style.display="none";
 
-    batch.set(videoRef, {
-      title: title,
-      description: description,
-      price: price,
-      thumbnailUrl: thumbnailUrl,
-      createdAt: serverTimestamp()
-    });
+  await loadVideos();
 
-    batch.set(adminRef, {
-      title: title,
-      description: description,
-      price: price,
-      thumbnailUrl: thumbnailUrl,
-      videoPath: videoPath,
-      videoFileName: file.name,
-      contentType: contentType,
-      createdAt: serverTimestamp()
-    });
-
-    await batch.commit();
-
-    showStatus(
-      "Hongera! Video imepakiwa na taarifa zimehifadhiwa."
-    );
-
-    document.getElementById("videoTitle").value = "";
-    document.getElementById("videoDescription").value = "";
-    document.getElementById("videoPrice").value = "";
-    document.getElementById("thumbnailUrl").value = "";
-    document.getElementById("videoFile").value = "";
-
-    await loadVideos();
-
-  } catch (error) {
-    console.error("Video upload error:", error);
-    showStatus(
-      "KOSA: " + (error.message || "Hitilafu isiyojulikana.")
-    );
-  } finally {
-    button.disabled = false;
-  }
+ }catch(error){
+  console.error(error);
+  showStatus("KOSA: "+(error.message||"Hitilafu imetokea."));
+ }finally{
+  button.disabled=false;
+ }
 };
 
-async function loadVideos() {
-  const list = document.getElementById("videoList");
-  list.textContent = "Inapakia video...";
+/* ORODHA YA VIDEO ZA ADMIN */
+async function loadVideos(){
+ const list=$("videoList");
+ list.textContent="Inapakia video...";
 
-  try {
-    const snapshot = await getDocs(collection(db, "adminData"));
+ try{
+  const snapshot=await getDocs(collection(db,"adminData"));
+  list.innerHTML="";
 
-    list.innerHTML = "";
-
-    if (snapshot.empty) {
-      list.textContent = "Hakuna video zilizowekwa.";
-      return;
-    }
-
-    snapshot.forEach((item) => {
-      const video = item.data();
-
-      const div = document.createElement("div");
-      div.className = "video-item";
-
-      const heading = document.createElement("strong");
-      heading.textContent = video.title || "Video";
-
-      const details = document.createElement("p");
-      details.textContent = "Bei: TZS " + (video.price ?? 0);
-
-      const filename = document.createElement("p");
-      filename.className = "small";
-      filename.textContent =
-        video.videoFileName || "Video imehifadhiwa";
-
-      div.append(heading, details, filename);
-      list.appendChild(div);
-    });
-
-  } catch (error) {
-    list.textContent =
-      "Imeshindikana kupakia orodha: " + error.message;
+  if(snapshot.empty){
+   list.textContent="Hakuna video zilizowekwa.";
+   return;
   }
+
+  snapshot.forEach(item=>{
+   const video=item.data();
+   const div=document.createElement("div");
+   div.className="video-item";
+
+   if(video.thumbnailDataUrl){
+    const img=document.createElement("img");
+    img.src=video.thumbnailDataUrl;
+    img.alt=video.title||"Picha ya video";
+    div.appendChild(img);
+   }
+
+   const heading=document.createElement("strong");
+   heading.textContent=video.title||"Video";
+
+   const details=document.createElement("p");
+   details.textContent="Bei: TZS "+(video.price??0);
+
+   div.append(heading,details);
+   list.appendChild(div);
+  });
+ }catch(error){
+  list.textContent="Imeshindikana kupakia orodha: "+error.message;
+ }
 }
 
-document.getElementById("logoutBtn").onclick = async () => {
-  await signOut(auth);
-};
+$("logoutBtn").onclick=async()=>await signOut(auth);
 
 </script>
 </body>
